@@ -1,0 +1,23 @@
+{
+    "name": "drewlabs/txn-client",
+    "description": "Client Library for making request to txn webservice server using PHP CURL library",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Drewlabs\\TxnClient\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "azandrew-sidoine",
+            "email": "asmyns.platonnas29@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.0",
+        "ext-curl": "*"
+    }
+}
