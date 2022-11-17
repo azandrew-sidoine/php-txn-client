@@ -2,7 +2,7 @@
 
 namespace Drewlabs\TxnClient;
 
-class Credentials
+class Credentials implements TxnRequestCredentialsInterface
 {
     /**
      * Authentication key for authorizing request
@@ -31,21 +31,11 @@ class Credentials
         $this->secret = $secret;
     }
 
-    /**
-     * Authorization secret property getter method
-     * 
-     * @return string 
-     */
     public function getKey()
     {
         return $this->key;
     }
 
-    /**
-     * Authorization secret property getter method
-     * 
-     * @return string 
-     */
     public function getSecret()
     {
         return $this->secret;

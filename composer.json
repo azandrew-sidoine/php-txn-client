@@ -18,6 +18,8 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.0",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "psr/http-client": "^1.0",
+        "drewlabs/psr7-stream": "^1.1"
     }
 }

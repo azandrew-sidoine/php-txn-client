@@ -4,14 +4,14 @@ namespace Drewlabs\TxnClient;
 
 use InvalidArgumentException;
 
-class Txn
+class Txn implements TxnInterface
 {
     /**
      * Txn payment url property
      * 
      * @var string
      */
-    private $paymentURL;
+    private $paymentUri;
 
     /**
      * Creates an instance of {@see \Drewlabs\TxnClient\Txn} class
@@ -38,13 +38,12 @@ class Txn
         // TODO : Provides deserialization to Txn type implementation
     }
 
-    /**
-     * Returns the payment URL of the current transaction (txn)
-     * 
-     * @return string 
-     */
-    public function getPaymentURL()
+    public function id()
     {
-        return $this->paymentURL;
+    }
+
+    public function getPaymentUri()
+    {
+        return $this->paymentUri;
     }
 }

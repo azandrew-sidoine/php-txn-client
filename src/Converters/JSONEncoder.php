@@ -1,9 +1,18 @@
 <?php
 
-namespace Drewlabs\TxnClient;
+namespace Drewlabs\TxnClient\Converters;
 
+use Drewlabs\TxnClient\HasContructorFactory;
+
+/**
+ * @method static JSONEncoder new(?int $depth = null, int $flags)
+ * 
+ * @package Drewlabs\TxnClient
+ */
 class JSONEncoder
 {
+    use HasContructorFactory;
+
     /**
      * 
      * @var int
@@ -22,7 +31,7 @@ class JSONEncoder
      * @param null|int $depth 
      * @param int $flags 
      */
-    public function __construct(?int $depth = null, int $flags)
+    public function __construct(?int $depth = null, int $flags = 0)
     {
         $this->depth = $depth ?? 512;
         $this->flags =  $flags ?? JSON_PRETTY_PRINT;
@@ -36,7 +45,7 @@ class JSONEncoder
      * 
      * @return string|false 
      */
-    public function decode($value)
+    public function encode($value)
     {
         return @json_encode($value, $this->flags, $this->depth);
     }

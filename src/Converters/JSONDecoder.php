@@ -1,11 +1,19 @@
 <?php
 
-namespace Drewlabs\TxnClient;
+namespace Drewlabs\TxnClient\Converters;
 
+use Drewlabs\TxnClient\HasContructorFactory;
 use JsonException;
 
+/**
+ * @method static JSONDecoder new(bool $associative = true, ?int $depth = null, int $flags)
+ * 
+ * @package Drewlabs\TxnClient
+ */
 class JSONDecoder
 {
+    use HasContructorFactory;
+
     /**
      * 
      * @var bool
@@ -31,7 +39,7 @@ class JSONDecoder
      * @param null|int $depth 
      * @param int $flags 
      */
-    public function __construct($associative = true, ?int $depth = null, int $flags)
+    public function __construct($associative = true, ?int $depth = 512, int $flags = 0)
     {
         $this->associative = $associative;
         $this->depth = $depth ?? 512;
