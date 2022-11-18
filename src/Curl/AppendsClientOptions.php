@@ -2,6 +2,10 @@
 
 namespace Drewlabs\Curl;
 
+use Drewlabs\Psr7\CreatesJSONStream;
+use Drewlabs\Psr7\CreatesMultipartStream;
+use Drewlabs\Psr7\CreatesURLEncodedStream;
+use Drewlabs\Psr7Stream\LazyStream;
 use Drewlabs\Psr7Stream\Stream;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
@@ -10,91 +14,85 @@ use RuntimeException;
 trait AppendsClientOptions
 {
 
-    // if (isset($options['headers'])) {
-    //     if (array_keys($options['headers']) === range(0, count($options['headers']) - 1)) {
-    //         throw new InvalidArgumentException('The headers array must have header name as keys.');
-    //     }
-    //     $modify['set_headers'] = $options['headers'];
-    //     unset($options['headers']);
-    // }
+    /**
+     * Override psr7 request with request options
+     * 
+     * @param RequestInterface $request 
+     * @param ClientOptions $clientOptions 
+     * @return RequestInterface 
+     * @throws InvalidArgumentException 
+     */
+    private function overrideRequest(RequestInterface $request, ClientOptions $clientOptions): RequestInterface
+    {
 
-    // if (isset($options['form_params'])) {
-    //     if (isset($options['multipart'])) {
-    //         throw new InvalidArgumentException('You cannot use '
-    //             . 'form_params and multipart at the same time. Use the '
-    //             . 'form_params option if you want to send application/'
-    //             . 'x-www-form-urlencoded requests, and the multipart '
-    //             . 'option to send multipart/form-data requests.');
-    //     }
-    //     $options['body'] = \http_build_query($options['form_params'], '', '&');
-    //     unset($options['form_params']);
-    //     // Ensure that we don't have the header in different case and set the new value.
-    //     $options['_conditional'] = Psr7\Utils::caselessRemove(['Content-Type'], $options['_conditional']);
-    //     $options['_conditional']['Content-Type'] = 'application/x-www-form-urlencoded';
-    // }
+        $requestOptions = $clientOptions->getRequest();
+        if (null === $requestOptions) {
+            return $request;
+        }
+        // Get the request uri in temparary variable and check later if it changes 
+        // to update the request query
+        $uri = $request->getUri();
+        $body = $request->getBody();
+        $contentTypeHeader = empty($result = $request->getHeader('Content-Type')) ? '' : implode(',', $result);
 
-    // if (isset($options['multipart'])) {
-    //     $options['body'] = new Psr7\MultipartStream($options['multipart']);
-    //     unset($options['multipart']);
-    // }
+        if (!empty($headers = $requestOptions->getHeaders())) {
+            if (array_keys($headers) === range(0, count($headers) - 1)) {
+                throw new InvalidArgumentException('The headers array must have header name as keys.');
+            }
+        }
+        // Find the content type header from the request option headers
+        foreach ($headers as $key => $value) {
+            if (strtolower($key) === 'content-type') {
+                $contentTypeHeader = (string)$value;
+            }
+        }
+        $optionsBody = $requestOptions->getBody();
+        if (!empty($contentTypeHeader) && preg_match('/^multipart\/form-data/', $contentTypeHeader) && !empty($optionsBody)) {
+            // Handle request of multipart http request
+            $createsStream = new CreatesMultipartStream($optionsBody);
+            $body = new LazyStream($createsStream);
+            $headers['Content-Type'] = 'multipart/form-data; boundary=' . $createsStream->getBoundary();
+        } else if (!empty($contentTypeHeader) && (false !== preg_match('/^(?:application|text)\/(?:[a-z]+(?:[\.-][0-9a-z]+){0,}[\+\.]|x-)?json(?:-[a-z]+)?/i', $contentTypeHeader))) {
+            // Handle JSON request
+            $body = new LazyStream(new CreatesJSONStream($optionsBody));
+            $headers['Content-Type'] = 'application/json';
+        } else {
+            // Handle URL encoded request
+            $body = new LazyStream(new CreatesURLEncodedStream($optionsBody));
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
 
-    // if (isset($options['json'])) {
-    //     $options['body'] = Utils::jsonEncode($options['json']);
-    //     unset($options['json']);
-    //     // Ensure that we don't have the header in different case and set the new value.
-    //     $options['_conditional'] = Psr7\Utils::caselessRemove(['Content-Type'], $options['_conditional']);
-    //     $options['_conditional']['Content-Type'] = 'application/json';
-    // }
+        if (!empty($query = $requestOptions->getQuery())) {
+            if (\is_array($query)) {
+                $query = \http_build_query($query, '', '&', \PHP_QUERY_RFC3986);
+            }
+            if (!\is_string($query)) {
+                throw new InvalidArgumentException('query must be a string or array');
+            }
+            $uri = $uri->withQuery($query);
+        }
 
-    // if (!empty($options['decode_content'])
-    //     && $options['decode_content'] !== true
-    // ) {
-    //     // Ensure that we don't have the header in different case and set the new value.
-    //     $options['_conditional'] = Psr7\Utils::caselessRemove(['Accept-Encoding'], $options['_conditional']);
-    //     $modify['set_headers']['Accept-Encoding'] = $options['decode_content'];
-    // }
+        if (!empty($encoding = $requestOptions->getEncoding()) && $encoding !== true) {
+            // Ensure that we don't have the header in different case and set the new value.
+            $headers['Accept-Encoding'] = $encoding;
+        }
 
-    // if (isset($options['body'])) {
-    //     if (\is_array($options['body'])) {
-    //         throw $this->invalidBody();
-    //     }
-    //     $modify['body'] = Psr7\Utils::streamFor($options['body']);
-    //     unset($options['body']);
-    // }
+        if ($uri !== $request->getUri()) {
+            $request = $request->withUri($uri);
+        }
 
-    // if (!empty($options['auth']) && \is_array($options['auth'])) {
-    //     $value = $options['auth'];
-    //     $type = isset($value[2]) ? \strtolower($value[2]) : 'basic';
-    //     switch ($type) {
-    //         case 'basic':
-    //             // Ensure that we don't have the header in different case and set the new value.
-    //             $modify['set_headers'] = Psr7\Utils::caselessRemove(['Authorization'], $modify['set_headers']);
-    //             $modify['set_headers']['Authorization'] = 'Basic '
-    //                 . \base64_encode("$value[0]:$value[1]");
-    //             break;
-    //         case 'digest':
-    //             // @todo: Do not rely on curl
-    //             $options['curl'][\CURLOPT_HTTPAUTH] = \CURLAUTH_DIGEST;
-    //             $options['curl'][\CURLOPT_USERPWD] = "$value[0]:$value[1]";
-    //             break;
-    //         case 'ntlm':
-    //             $options['curl'][\CURLOPT_HTTPAUTH] = \CURLAUTH_NTLM;
-    //             $options['curl'][\CURLOPT_USERPWD] = "$value[0]:$value[1]";
-    //             break;
-    //     }
-    // }
+        if (!empty($headers)) {
+            foreach ($headers as $name => $value) {
+                $request = $request->withHeader($name, $value);
+            }
+        }
 
-    // if (isset($options['query'])) {
-    //     $value = $options['query'];
-    //     if (\is_array($value)) {
-    //         $value = \http_build_query($value, '', '&', \PHP_QUERY_RFC3986);
-    //     }
-    //     if (!\is_string($value)) {
-    //         throw new InvalidArgumentException('query must be a string or array');
-    //     }
-    //     $modify['query'] = $value;
-    //     unset($options['query']);
-    // }
+        if ($body !== $request->getBody()) {
+            $request = $request->withBody($body);
+        }
+
+        return $request;
+    }
 
     /**
      * 
@@ -136,7 +134,9 @@ trait AppendsClientOptions
             }
         }
 
-        if ($clientOptions->decodeContent()) {
+        $requestOptions = $clientOptions->getRequest();
+
+        if ($requestOptions->getEncoding()) {
             if ($accept = $request->getHeaderLine('Accept-Encoding')) {
                 $output[\CURLOPT_ENCODING] = $accept;
             } else {
@@ -156,7 +156,9 @@ trait AppendsClientOptions
             throw new \RuntimeException(\sprintf('Directory %s does not exist for sink value of %s', \dirname($sink), $sink));
         } else {
             // TODO : Provide a lazy stream implementation
-            $sink = Stream::new($sink, 'w+');
+            $sink = new LazyStream(function () use ($sink) {
+                return Stream::new($sink, 'w+');
+            });
         }
         $output[\CURLOPT_WRITEFUNCTION] = static function ($ch, $write) use ($sink) {
             return $sink->write($write);
@@ -233,6 +235,29 @@ trait AppendsClientOptions
             $output[\CURLOPT_PROGRESSFUNCTION] = static function ($resource, int $downloadSize, int $downloaded, int $uploadSize, int $uploaded) use ($progress) {
                 $progress($downloadSize, $downloaded, $uploadSize, $uploaded);
             };
+        }
+        return $output;
+    }
+
+    private function applyAuthOptions(RequestOptions $requestOptions, array $output)
+    {
+
+        if (!empty($auth = $requestOptions->getAuth()) && \is_array($auth)) {
+            $type = isset($auth[2]) ? \strtolower($auth[2]) : 'basic';
+            switch ($type) {
+                case 'basic':
+                    $output['__HEADERS__']['Authorization'] = 'Basic ' . \base64_encode("$auth[0]:$auth[1]");
+                    break;
+                case 'digest':
+                    // TODO: In future release, find an implementation that build a digest auth algorithm
+                    $output['curl'][\CURLOPT_HTTPAUTH] = \CURLAUTH_DIGEST;
+                    $output['curl'][\CURLOPT_USERPWD] = "$auth[0]:$auth[1]";
+                    break;
+                case 'ntlm':
+                    $output['curl'][\CURLOPT_HTTPAUTH] = \CURLAUTH_NTLM;
+                    $output['curl'][\CURLOPT_USERPWD] = "$auth[0]:$auth[1]";
+                    break;
+            }
         }
         return $output;
     }

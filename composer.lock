@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cd5c3e02f679d3b6f89f830c64e8af77",
+    "content-hash": "1eb2fd0be7af5ce0da0fed685decbc48",
     "packages": [
         {
             "name": "drewlabs/psr7-stream",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream.git",
-                "reference": "53cbb83d14095a647e613c614693127b6e166d97"
+                "reference": "7f935b5f7f56959f8db5b16200c6dec8b93302dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7-stream/zipball/53cbb83d14095a647e613c614693127b6e166d97",
-                "reference": "53cbb83d14095a647e613c614693127b6e166d97",
+                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7-stream/zipball/7f935b5f7f56959f8db5b16200c6dec8b93302dc",
+                "reference": "7f935b5f7f56959f8db5b16200c6dec8b93302dc",
                 "shasum": ""
             },
             "require": {
@@ -50,9 +50,9 @@
             "description": "Provides utility classes and implementations for the PSR7 stream interface",
             "support": {
                 "issues": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/issues",
-                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/tree/v1.1.0"
+                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/tree/v1.2.0"
             },
-            "time": "2022-11-17T17:58:12+00:00"
+            "time": "2022-11-18T17:35:39+00:00"
         },
         {
             "name": "psr/http-client",

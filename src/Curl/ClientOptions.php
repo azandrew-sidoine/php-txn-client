@@ -2,6 +2,7 @@
 
 namespace Drewlabs\Curl;
 
+use Drewlabs\Psr7\Request;
 use ReflectionClass;
 use Psr\Http\Message\StreamInterface;
 
@@ -12,12 +13,6 @@ class ClientOptions
      * @var bool
      */
     private $verify;
-
-    /**
-     * 
-     * @var bool
-     */
-    private $decode_content;
 
     /**
      * 
@@ -72,6 +67,12 @@ class ClientOptions
      * @var int
      */
     private $connect_timeout;
+
+    /**
+     * 
+     * @var RequestOptions
+     */
+    private $request;
 
     /**
      * Creates an instance of the clien options class
@@ -133,20 +134,6 @@ class ClientOptions
             $this->verify = $value;
         }
         return $this->verify;
-    }
-
-    /**
-     * Whether to decode the request body
-     * 
-     * @param bool|null $value 
-     * @return bool 
-     */
-    public function decodeContent(bool $value = null)
-    {
-        if (null !== $value) {
-            $this->decode_content = $value;
-        }
-        return $this->decode_content ?? false;
     }
 
     /**
@@ -288,5 +275,27 @@ class ClientOptions
             $this->connect_timeout = $value;
         }
         return $this->connect_timeout;
+    }
+
+    /**
+     * Set the request options parameters
+     * 
+     * @param array|RequestOptions $options 
+     * @return void 
+     */
+    public function setRequest($options)
+    {
+        $this->request = is_array($options) ? RequestOptions::create($options) : $options;
+    }
+
+    /**
+     * Return the list of request options provided to the request client
+     * 
+     * @return RequestOptions 
+     */
+    public function getRequest()
+    {
+        return is_array($this->request) ? RequestOptions::create($this->request) : $this->request ?? new RequestOptions();
+
     }
 }
