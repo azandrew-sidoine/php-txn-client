@@ -1,6 +1,6 @@
 <?php
 
-namespace Drewlabs\TxnClient\Http;
+namespace Drewlabs\Psr7;
 
 use Exception;
 use Psr\Http\Client\RequestExceptionInterface;

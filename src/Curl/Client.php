@@ -1,10 +1,10 @@
 <?php
 
-namespace Drewlabs\TxnClient\Curl;
+namespace Drewlabs\Curl;
 
-use Drewlabs\TxnClient\Http\Cookies;
+use Drewlabs\Psr7\Cookies;
 use RuntimeException;
-use Drewlabs\TxnClient\Http\Headers;
+use Drewlabs\Psr7\Headers;
 use ErrorException;
 use InvalidArgumentException;
 

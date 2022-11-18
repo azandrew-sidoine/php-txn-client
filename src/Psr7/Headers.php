@@ -1,18 +1,17 @@
 <?php
 
-namespace Drewlabs\TxnClient\Http;
+namespace Drewlabs\Psr7;
 
 use ArrayAccess;
-use Drewlabs\TxnClient\Arrayable;
 use InvalidArgumentException;
 
-class Headers implements ArrayAccess, Arrayable
+class Headers implements ArrayAccess
 {
     /**
      * 
      * @var string[][]
      */
-    private $headers;
+    private $headers = [];
 
     /**
      * 

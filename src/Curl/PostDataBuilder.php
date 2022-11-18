@@ -1,6 +1,6 @@
 <?php
 
-namespace Drewlabs\TxnClient\Curl;
+namespace Drewlabs\Curl;
 
 use Drewlabs\TxnClient\Converters\JSONEncoder;
 use RuntimeException;

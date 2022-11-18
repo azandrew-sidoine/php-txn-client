@@ -1,6 +1,6 @@
 <?php
 
-namespace Drewlabs\TxnClient\Http;
+namespace Drewlabs\Psr7;
 
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;

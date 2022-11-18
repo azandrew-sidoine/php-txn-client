@@ -5,7 +5,9 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Drewlabs\\TxnClient\\": "src/"
+            "Drewlabs\\TxnClient\\": "src/",
+            "Drewlabs\\Psr7\\": "src/Psr7",
+            "Drewlabs\\Curl\\": "src/Curl"
         }
     },
     "authors": [

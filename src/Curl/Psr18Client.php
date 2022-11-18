@@ -1,12 +1,11 @@
 <?php
 
-namespace Drewlabs\TxnClient\Curl;
+namespace Drewlabs\Curl;
 
-use Drewlabs\TxnClient\Http\NetworkException;
-use Drewlabs\TxnClient\Http\RequestException;
-use Drewlabs\TxnClient\Http\Response;
-use Drewlabs\TxnClient\Http\Uri;
-use Exception;
+use Drewlabs\Psr7\NetworkException;
+use Drewlabs\Psr7\RequestException;
+use Drewlabs\Psr7\Response;
+use Drewlabs\Psr7\Uri;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -15,10 +14,11 @@ use ReflectionException;
 /**
  * @method static Psr18Client new(string $base_url, array $options = [])
  * 
- * @package Drewlabs\TxnClient\Curl
+ * @package Drewlabs\Curl
  */
 class Psr18Client implements ClientInterface
 {
+    use AppendsClientOptions;
     /**
      * 
      * @var Client
@@ -27,9 +27,9 @@ class Psr18Client implements ClientInterface
 
     /**
      * 
-     * @var string
+     * @var ClientOptions
      */
-    private $base_url;
+    private $options;
 
     private function __construct()
     {
@@ -38,18 +38,22 @@ class Psr18Client implements ClientInterface
     /**
      * Creates an instance of {@see Psr18Client}
      * 
-     * @param mixed $args 
+     * @param string $base_url
+     * @param ClientOptions $options 
      * @return Psr18Client 
      * @throws ReflectionException 
      */
-    public static function new(...$args)
+    public static function new(string $base_url = null, ClientOptions $options = null)
     {
         /**
          * @var Psr18Client
          */
         $instance = (new \ReflectionClass(__CLASS__))->newInstanceWithoutConstructor();
-        $instance->client = new Client(null, ...array_slice($args, 1));
-        $instance->base_url = $args[0] ?? null;
+        $instance->client = new Client(null, []);
+        $instance->options = $options ?? new ClientOptions();
+        if ($base_url) {
+            $instance->options->baseURL($base_url);
+        }
         return $instance;
     }
 
@@ -60,9 +64,10 @@ class Psr18Client implements ClientInterface
             $uri = $uri->withHost(rtrim($this->base_url, '/'));
         }
         $request = $request->withUri($uri);
-        $this->client->setOptions($this->prepareCurlRequest($request));
+        $options = $this->prepareCurlRequest($request);
+        unset($options['__HEADERS__']);
+        $this->client->setOptions($options);
         $this->client->execute();
-
         if (($errorno = $this->client->getError()) !== 0) {
             // Throw Error if client return error code different from 0
             [$exceptionMessage, $errorCode] = [$this->client->getErrorMessage(), CurlError::toHTTPStatusCode($errorno)];
@@ -75,7 +80,6 @@ class Psr18Client implements ClientInterface
             ) {
                 throw new NetworkException($request, $exceptionMessage, $errorCode);
             }
-
             throw new RequestException($request, $exceptionMessage, $errorCode);
         }
         $statusCode = $this->client->getStatusCode();
@@ -88,23 +92,36 @@ class Psr18Client implements ClientInterface
         );
     }
 
-
-    private function prepareCurlRequest(RequestInterface $request)
+    /**
+     * Prepare the curl request
+     * 
+     * @param RequestInterface $request 
+     * @return array 
+     */
+    public function prepareCurlRequest(RequestInterface $request)
     {
-        return $this->appendCurlBodyIfNotEmpty(
+        return $this->appendCurlHeaders(
             $request,
-            $this->appendCurlHeaders(
+            $this->appendClientOptions(
                 $request,
-                $this->curlDefaults($request)
+                $this->options,
+                $this->appendCurlBodyIfNotEmpty(
+                    $request,
+                    $this->curlDefaults($request)
+                )
             )
         );
     }
 
-
+    /**
+     * 
+     * @param RequestInterface $request 
+     * @return (string[][]|string|false|int)[] 
+     */
     private function curlDefaults(RequestInterface $request)
     {
         $defaults = [
-            '__HEADERS__'              => $request->getHeaders(),
+            '__HEADERS__'           => $request->getHeaders(),
             \CURLOPT_CUSTOMREQUEST  => $request->getMethod(),
             \CURLOPT_URL            => (string) $request->getUri()->withFragment(''),
             \CURLOPT_RETURNTRANSFER => false,
@@ -126,9 +143,15 @@ class Psr18Client implements ClientInterface
     }
 
 
-    private function appendCurlHeaders(RequestInterface $request, callable $callback)
+    /**
+     * 
+     * @param RequestInterface $request 
+     * @param array $options 
+     * @return mixed 
+     */
+    private function appendCurlHeaders(RequestInterface $request, array $options)
     {
-        $options = $callback($request);
+        // $options = $callback($request);
         foreach ($options['__HEADERS__'] as $name => $values) {
             foreach ($values as $value) {
                 $value = (string) $value;
@@ -148,22 +171,25 @@ class Psr18Client implements ClientInterface
         return $options;
     }
 
-    private function appendCurlBody(RequestInterface $request, callable $callback)
+    /**
+     * 
+     * @param RequestInterface $request 
+     * @param array $options
+     * @return mixed 
+     */
+    private function appendCurlBody(RequestInterface $request, array $options)
     {
-        $options = $callback($request);
+        // $options = $callback($request);
         $size = $request->hasHeader('Content-Length') ? (int) $request->getHeaderLine('Content-Length') : null;
-
-        // Send the body as a string if the size is less than 1MB OR if the
-        // [curl][body_as_string] request value is set.
         if (($size !== null && $size < 1000000)) {
             $options[\CURLOPT_POSTFIELDS] = (string) $request->getBody();
             // Don't duplicate the Content-Length header
-            // $this->removeHeader('Content-Length', $conf);
-            // $this->removeHeader('Transfer-Encoding', $conf);
+            $options = $this->removeHeaders($options, 'Content-Length', 'Transfer-Encoding');
         } else {
             $options[\CURLOPT_UPLOAD] =  true;
             if ($size !== null) {
                 $options[\CURLOPT_INFILESIZE] =  $size;
+                $options = $this->removeHeaders($options, 'Content-Length');
             }
             $body = $request->getBody();
             if ($body->isSeekable()) {
@@ -186,15 +212,19 @@ class Psr18Client implements ClientInterface
         return $options;
     }
 
-    private function appendCurlBodyIfNotEmpty(RequestInterface $request, callable $callback)
+    /**
+     * 
+     * @param RequestInterface $request 
+     * @param array $options
+     * @return mixed 
+     */
+    private function appendCurlBodyIfNotEmpty(RequestInterface $request, array $options)
     {
-        $options = $callback($request);
+        // $options = $callback($request);
         [$body, $size] = [($body = $request->getBody()), $body->getSize()];
-
         if ($size === null || $size > 0) {
             return $this->appendCurlBody($request, $options);
         }
-
         $method = $request->getMethod();
         if ($method === 'PUT' || $method === 'POST') {
             // See https://tools.ietf.org/html/rfc7230#section-3.3.2
@@ -213,32 +243,22 @@ class Psr18Client implements ClientInterface
         return $options;
     }
 
-    function createPipe(...$pipeline)
+    /**
+     * Remove a header from the options array.
+     *
+     * @param array  $options Array of options to modify
+     * @param string[] $name    Case-insensitive header to remove
+     */
+    private function removeHeaders(array $options, ...$names)
     {
-        return function (RequestInterface $request, \Closure $next) use ($pipeline) {
-            $nextFunc = function (RequestInterface $request, \Closure $interceptor) {
-                return $interceptor($request, function ($request) {
-                    return $request;
-                });
-            };
-            $stack = [function ($request) use (&$next) {
-                return $next($request);
-            }];
-            if (count($pipeline) === 0) {
-                $pipeline = [function (RequestInterface $request, \Closure $callback) {
-                    return $callback($request);
-                }];
-            }
-            foreach (\array_reverse($pipeline) as $func) {
-                $previous = array_pop($stack);
-                if (!is_callable($previous)) {
-                    throw new Exception('Interceptor function must be a callable instance');
+        foreach ($names as $name) {
+            foreach (\array_keys($options['__HEADERS__']) as $key) {
+                if (!\strcasecmp($key, $name)) {
+                    unset($options['__HEADERS__'][$key]);
+                    return;
                 }
-                array_push($stack, function ($request) use (&$func, &$previous) {
-                    return $func($request, $previous);
-                });
             }
-            return $nextFunc($request, array_pop($stack));
-        };
+        }
+        return $options;
     }
 }

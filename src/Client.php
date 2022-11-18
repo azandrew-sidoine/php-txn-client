@@ -2,7 +2,7 @@
 
 namespace Drewlabs\TxnClient;
 
-use Drewlabs\TxnClient\Curl\Client as CURLClient;
+use Drewlabs\Curl\Client as CURLClient;
 
 final class Client implements ClientInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drewlabs\TxnClient\Http;
+namespace Drewlabs\Psr7;
 
 use Drewlabs\Psr7Stream\Stream;
 use Psr\Http\Message\StreamInterface;
