@@ -14,9 +14,9 @@ interface TxnRequestBodyInterface extends Arrayable
     /**
      * Get the response config of the current request object
      * 
-     * @return Arrayable 
+     * @return HTTPResponseConfigInterface 
      */
-    public function getResponseConfig($value);
+    public function getResponseConfig();
 
     /**
      * Get the txn property

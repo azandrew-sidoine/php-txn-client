@@ -22,7 +22,8 @@ trait ArrayInstanciable
                 continue;
             }
             // Tries to generate a camelcase method name from property name and prefix it with set
-            if (method_exists($instance, $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $name))))) {
+            $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $name)));
+            if (method_exists($instance, $method)) {
                 call_user_func([$instance, $method], $value);
                 continue;
             }

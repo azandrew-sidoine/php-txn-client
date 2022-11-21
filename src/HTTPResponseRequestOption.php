@@ -9,7 +9,7 @@ use InvalidArgumentException;
  * 
  * @package Drewlabs\TxnClient
  */
-class HTTPResponseRequestOption implements Arrayable
+class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
 {
     use HasContructorFactory;
     /**
@@ -58,13 +58,27 @@ class HTTPResponseRequestOption implements Arrayable
         if (is_array($options) && isset($options['key']) && isset($options['value'])) {
             return new static($options['key'], $options['value'], $options['type'] ?? 1);
         }
-        if (is_array($options)) {
+        if (is_array($options) && (count($options) >= 2) && ($options === array_filter($options, 'is_scalar'))) {
             return new static(...array_values($options));
+        }
+        if (is_array($options) && count($options) === 1 && (($options[0] ?? null) instanceof self)) {
+            return $options[0]->copy();
         }
         if (!($options instanceof HTTPResponseRequestOption)) {
             throw new InvalidArgumentException(__METHOD__ . ' expect an insance of ' . __CLASS__ . ' or a PHP array as parameter, got ' . (null !== $options && is_object($options) ? get_class($options) : gettype($options)));
         }
-        return new static($options->getKey(), $options->getValue(), $options->getType() ?? 1);
+        return $options->copy();
+    }
+
+    /**
+     * Creates a new instance of the current class by copying attrributes values from the provided object
+     * 
+     * @param HTTPResponseRequestOption $option 
+     * @return static 
+     */
+    private function copy()
+    {
+        return new static($this->getKey(), $this->getValue(), $this->getType() ?? 1);
     }
 
     /**

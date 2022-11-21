@@ -93,7 +93,7 @@ class TxnRequest implements TxnRequestInterface
     public function withMethod(string $method)
     {
         if (false === preg_match('/GET|POST|PUT|DELETE|HEAD|OPTION|TRACE/i', $method)) {
-                throw new InvalidArgumentException("Unsupprted request method " . (string)$method . ". Supported values are GET, POST, PUT, DELETE, HEAD, OPTION");
+            throw new InvalidArgumentException("Unsupprted request method " . (string)$method . ". Supported values are GET, POST, PUT, DELETE, HEAD, OPTION");
         }
         $object = clone $this;
         $object->method = $method;
@@ -150,6 +150,12 @@ class TxnRequest implements TxnRequestInterface
 
     public function __clone()
     {
-        $this->body = clone $this->body;
+        if ($this->body) {
+            $this->body = clone $this->body;
+        }
+
+        if ($this->uri && is_object($this->uri)) {
+            $this->uri = clone $this->uri;
+        }
     }
 }

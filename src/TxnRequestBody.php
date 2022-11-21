@@ -14,7 +14,7 @@ class TxnRequestBody implements TxnRequestBodyInterface
 
     /**
      * 
-     * @var Arrayable
+     * @var HTTPResponseConfigInterface
      */
     private $response;
 
@@ -22,9 +22,9 @@ class TxnRequestBody implements TxnRequestBodyInterface
      * Creates an instance of the {@see \Drewlabs\TxnClient\TxnRequestBody} class
      * 
      * @param TxnInterface $txn
-     * @param Arrayable $response 
+     * @param HTTPResponseConfigInterface $response 
      */
-    public function __construct(Txn $txn, Arrayable $response = null)
+    public function __construct(Txn $txn, HTTPResponseConfigInterface $response = null)
     {
         $this->txn = $txn;
         $this->response = $response;
@@ -57,7 +57,7 @@ class TxnRequestBody implements TxnRequestBodyInterface
         return $object;
     }
 
-    public function getResponseConfig($value)
+    public function getResponseConfig()
     {
         return $this->response;
     }
@@ -69,6 +69,15 @@ class TxnRequestBody implements TxnRequestBodyInterface
 
     public function toArray()
     {
+        if (empty($this->txn->getProcessors())) {
+            throw new MalformedRequestException('No invoice processor provided !');
+        }
+        if (empty($this->txn->getReference())) {
+            throw new MalformedRequestException('No invoice reference value provided !');
+        }
+        if (empty($this->txn->getAmount())) {
+            throw new MalformedRequestException('No invoice amount value provided !');
+        }
         return [
             'reference' => $this->txn->getReference(),
             'amount' => $this->txn->getAmount(),
@@ -97,7 +106,11 @@ class TxnRequestBody implements TxnRequestBodyInterface
      */
     public function __clone()
     {
-        $this->txn = clone $this->txn;
-        $this->response = clone $this->response;
+        if ($this->txn) {
+            $this->txn = clone $this->txn;
+        }
+        if ($this->response) {
+            $this->response = clone $this->response;
+        }
     }
 }

@@ -91,9 +91,11 @@ class Txn implements TxnInterface
         $this->payment_url = $payment_url;
         $this->id = $id;
         $this->reference = $reference;
-        $this->currency = $currency;
+        $this->currency = $currency ?? 'XOF';
         $this->amount = $amount;
-        $this->processors = $this->setProcessors($processors);
+        $this->processors = array_map(function ($processor) {
+            return (string)$processor;
+        }, $processors ?? []);
         $this->label = $label;
         $this->debtor = $debtor;
     }
@@ -126,14 +128,13 @@ class Txn implements TxnInterface
      */
     public function setId($value)
     {
-        $this->id = $value;
-        return $this;
+        return $this->merge('id', $value);
     }
 
     /**
      * Returns the txn payment url 
      * 
-     * @return string|Stringable 
+     * @return static 
      */
     public function setPaymentUrl(string $url)
     {
@@ -143,20 +144,18 @@ class Txn implements TxnInterface
         if (!in_array(strtolower($components['scheme'] ?? ''), ['http', 'https'])) {
             throw new UnexpectedValueException('Payment URL must be a valid HTTP resource URL');
         }
-        $this->payment_url = $url;
-        return $this;
+        return $this->merge('payment_url', $url);
     }
 
     /**
      * Returns the transaction reference
      * 
      * @param string $ref 
-     * @return $this 
+     * @return static 
      */
     public function setReference(string $ref)
     {
-        $this->reference = $ref;
-        return $this;
+        return $this->merge('reference', $ref);
     }
 
 
@@ -232,7 +231,7 @@ class Txn implements TxnInterface
          * @var object|\stdClass
          */
         $object = clone ($this);
-        $object->__set($attribute, $value);
+        $object->{$attribute} = $value;
         return $object;
     }
 

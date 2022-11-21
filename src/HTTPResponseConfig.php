@@ -4,7 +4,7 @@ namespace Drewlabs\TxnClient;
 
 use ReflectionException;
 
-class HTTPResponseConfig implements Arrayable
+class HTTPResponseConfig implements HTTPResponseConfigInterface
 {
     use ArrayInstanciable;
 
@@ -78,14 +78,12 @@ class HTTPResponseConfig implements Arrayable
      * 
      * $config = HTTPResponseConfig::create(
      *      [
-     *          'url' => '...',
-     *          'redirect_response_url' => '...',
-     *          'method' => '...',
-     *          'txn_reference_key' => '...',
-     *          'txn_time_key' => '...',
-     *          'txn_amount_key' => '...',
-     *          'txn_id_key' => '...',
-     *          'txn_processor_key' => '...',
+     *          'method' => 'GET',
+     *          'txn_reference_key' => 't_ref',
+     *          'txn_time_key' => 't_time',
+     *          'txn_amount_key' => 't_montant',
+     *          'txn_id_key' => 't_id',
+     *          'txn_processor_key' => 't_processor_id',
      *          'request_options' => [
      *              // Send the response request option as array
      *              ['api_key', 'api_key_value', 1],
@@ -107,22 +105,25 @@ class HTTPResponseConfig implements Arrayable
     {
         $attributes = array_merge(static::defaults() ?? [], $attributes);
         if (is_array($attributes)) {
-            return self::createFromArray();
+            return self::createFromArray($attributes);
         }
         return new static();
     }
 
+    /**
+     * Returns the default http response configuration array
+     * 
+     * @return string[] 
+     */
     public static function defaults()
     {
         return [
-            'url' => '',
-            'redirect_response_url' => '',
-            'method' => '',
-            'txn_reference_key' => '',
-            'txn_time_key' => '',
-            'txn_amount_key' => '',
-            'txn_id_key' => '',
-            'txn_processor_key' => '',
+            'method' => 'POST',
+            'txn_reference_key' => 't_ref',
+            'txn_time_key' => 't_time',
+            'txn_amount_key' => 't_montant',
+            'txn_id_key' => 't_id',
+            'txn_processor_key' => 't_processor_id',
         ];
     }
 
@@ -225,11 +226,12 @@ class HTTPResponseConfig implements Arrayable
     /**
      * Set the Http response request options
      * 
-     * @param array<array> $value 
+     * @param array<array>|Arrayable $value 
      * @return void 
      */
-    public function setRequestOptions(array $value)
+    public function setRequestOptions($value)
     {
+        $value = is_array($value) ? $value : [$value];
         $isArrayList = $value === array_filter($value, 'is_array');
         $value = $isArrayList ? $value : [$value];
         $this->request_options = array_map(function ($option) {
@@ -333,7 +335,7 @@ class HTTPResponseConfig implements Arrayable
      */
     public function getRequestOptions()
     {
-        return $this->request_options;
+        return $this->request_options ?? [];
     }
 
     public function toArray()

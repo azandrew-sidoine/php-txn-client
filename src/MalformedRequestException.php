@@ -4,6 +4,7 @@ namespace Drewlabs\TxnClient;
 
 use Exception;
 
-class TxnRequestException extends Exception
+class MalformedRequestException extends Exception
 {
+
 }
