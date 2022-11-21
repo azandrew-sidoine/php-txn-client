@@ -26,8 +26,37 @@ final class Client implements ClientInterface
     {
         // TODO : Provide request handler implementation
         $this->prepare($request);
-        $this->backend->execute($request->getBody());
+        $this->backend->send($request->getBody());
     }
+
+    // /**
+    //  * 
+    //  * @param array $cookies 
+    //  * @return void 
+    //  */
+    // private function setRequestCookies(array $cookies)
+    // {
+    //     if (count($cookies)) {
+    //         $this->setOption(CURLOPT_COOKIE, implode('; ', array_map(function ($key, $value) {
+    //             return $key . '=' . $value;
+    //         }, array_keys($cookies), array_values($cookies))));
+    //     }
+    // }
+
+    //     /**
+    //  * Set the curl session headers
+    //  * 
+    //  * @param array $requestHeaders 
+    //  * @return void 
+    //  */
+    // private function setRequestHeaders(array $requestHeaders = [])
+    // {
+    //     $headers = [];
+    //     foreach ($requestHeaders as $key => $value) {
+    //         $headers[] = $key . ': ' . implode(', ', $value);
+    //     }
+    //     $this->setOption(CURLOPT_HTTPHEADER, $headers);
+    // }
 
     private function prepare(TxnRequestInterface $request)
     {

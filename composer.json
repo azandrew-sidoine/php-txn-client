@@ -6,9 +6,13 @@
     "autoload": {
         "psr-4": {
             "Drewlabs\\TxnClient\\": "src/",
-            "Drewlabs\\Psr7\\": "src/Psr7",
+            "Drewlabs\\Psr7\\": "src/Psr7/src/",
             "Drewlabs\\Curl\\": "src/Curl"
         }
+    },
+    "autoload-dev": {
+        "Drewlabs\\Psr7\\Tests\\": "tests/psr7/",
+        "Drewlabs\\Curl\\Tests\\": "tests/curl/"
     },
     "authors": [
         {
@@ -23,5 +27,9 @@
         "ext-curl": "*",
         "psr/http-client": "^1.0",
         "drewlabs/psr7-stream": "^1.2"
+    },
+    "require-dev": {
+        "donatj/mock-webserver": "^2.5",
+        "phpunit/phpunit": "^9.5"
     }
 }

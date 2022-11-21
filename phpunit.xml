@@ -18,7 +18,7 @@
     </include>
   </coverage>
   <testsuites>
-    <testsuite name="Curl client and Psr18 Client tests">
+    <testsuite name="Psr7 implementations tests">
       <directory suffix="Test.php">./tests</directory>
     </testsuite>
   </testsuites>
