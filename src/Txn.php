@@ -3,22 +3,46 @@
 namespace Drewlabs\TxnClient;
 
 use InvalidArgumentException;
+use Stringable;
+use UnexpectedValueException;
 
 class Txn implements TxnInterface
 {
+    use ArrayInstanciable;
+
     /**
      * Txn payment url property
      * 
      * @var string
      */
-    private $paymentUri;
+    private $payment_url;
+
+    /**
+     * Txn id property
+     * 
+     * @var string
+     */
+    private $id;
+
+    /**
+     * Txn reference property
+     * 
+     * @var string
+     */
+    private $reference;
 
     /**
      * Creates an instance of {@see \Drewlabs\TxnClient\Txn} class
+     * 
+     * @param string|int $id 
+     * @param string $payment_url 
+     * @param string $reference 
      */
-    public function __construct()
+    public function __construct($id = null, string $payment_url = null, string $reference = null)
     {
-        // Provide constructor implementation 
+        $this->payment_url = $payment_url;
+        $this->id = $id;
+        $this->reference = $reference;
     }
 
     /**
@@ -34,16 +58,81 @@ class Txn implements TxnInterface
         }
         if (!is_array($attributes)) {
             throw new InvalidArgumentException("Expected PHP array or object type, got " . (is_object($attributes) && !is_null($attributes) ? get_class($attributes) : gettype($attributes)));
+        };
+        if (is_array($attributes)) {
+            return self::createFromArray($attributes);
         }
-        // TODO : Provides deserialization to Txn type implementation
+        return new static();
     }
 
-    public function id()
+    /**
+     * Set the txn id property
+     * 
+     * @param string|int $value 
+     * @return static 
+     */
+    public function setId($value)
     {
+        $this->id = $value;
+        return $this;
     }
 
-    public function getPaymentUri()
+    /**
+     * Returns the txn payment url 
+     * 
+     * @return string|Stringable 
+     */
+    public function setPaymentUrl(string $url)
     {
-        return $this->paymentUri;
+        if (false === ($components = @parse_url($url))) {
+            throw new UnexpectedValueException('$url parameter must be a valid resource url');
+        }
+        if (!in_array(strtolower($components['scheme'] ?? ''), ['http', 'https'])) {
+            throw new UnexpectedValueException('Payment URL must be a valid HTTP resource URL');
+        }
+        $this->payment_url = $url;
+        return $this;
+    }
+
+    /**
+     * Returns the transaction reference
+     * 
+     * @param string $ref 
+     * @return $this 
+     */
+    public function setReference(string $ref)
+    {
+        $this->reference = $ref;
+        return $this;
+    }
+
+    /**
+     * Returns the txn id
+     * 
+     * @return string 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Returns the txn payment url 
+     * 
+     * @return string|Stringable 
+     */
+    public function getPaymentUrl()
+    {
+        return $this->payment_url;
+    }
+
+    /**
+     * Returns the transaction reference
+     * 
+     * @return string 
+     */
+    public function getReference()
+    {
+        return $this->reference;
     }
 }

@@ -16,7 +16,7 @@ interface TxnRequestInterface
     /**
      * Returns an instance with the provided URI.
      * 
-     * @param strin|Stringable $uri
+     * @param string|Stringable $uri
      * 
      * @return static 
      */
@@ -39,7 +39,7 @@ interface TxnRequestInterface
     /**
      * Returns the request body of the current request
      * 
-     * @return string|Stringable
+     * @return string|TxnRequestBodyInterface
      */
     public function getBody();
 

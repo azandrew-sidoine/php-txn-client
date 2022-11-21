@@ -12,7 +12,7 @@ interface TxnInterface
      * 
      * @return string|Stringable
      */
-    public function getPaymentUri();
+    public function getPaymentUrl();
 
     /**
      * Returns the unique identifier of the transaction (txn)
@@ -20,5 +20,5 @@ interface TxnInterface
      * 
      * @return string 
      */
-    public function id();
+    public function getId();
 }

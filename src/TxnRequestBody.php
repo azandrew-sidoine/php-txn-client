@@ -2,7 +2,7 @@
 
 namespace Drewlabs\TxnClient;
 
-use Drewlabs\TxnClient\Converters\JSONEncoder;
+use Drewlabs\Curl\Converters\JSONEncoder;
 
 class TxnRequestBody implements TxnRequestBodyInterface
 {
@@ -48,14 +48,26 @@ class TxnRequestBody implements TxnRequestBodyInterface
      */
     private $response;
 
+    /**
+     * Creates an instance of the {@see \Drewlabs\TxnClient\TxnRequestBody} class
+     * 
+     * @param string $reference 
+     * @param mixed $amount 
+     * @param array $processors 
+     * @param string $currency 
+     * @param string|null $label 
+     * @param string|null $debtor 
+     * @param Arrayable $response 
+     * @return void 
+     */
     public function __construct(
         string $reference,
         $amount,
         array $processors,
         string $currency = 'XOF',
+        Arrayable $response = null,
         string $label = null,
-        string $debtor = null,
-        Arrayable $response
+        string $debtor = null
     ) {
 
         $this->ref = $reference;
@@ -69,24 +81,38 @@ class TxnRequestBody implements TxnRequestBodyInterface
         $this->response = $response;
     }
 
-    public function currency(string $value)
+    public function setCurrency(string $value)
     {
         return $this->merge('currency', $value);
     }
 
-    public function label(string $value)
+    public function setLabel(string $value)
     {
         return $this->merge('label', $value);
     }
 
-    public function debtor(string $value)
+    /**
+     * Set the response config of the current request object
+     * 
+     * @param Arrayable $value 
+     * 
+     * @return static 
+     */
+    public function setDebtor(string $value)
     {
         return $this->merge('debtor', $value);
     }
 
-    public function responseConfig(Arrayable $value)
+    /**
+     * Set the response config of the current request object
+     * 
+     * @param Arrayable|array $value 
+     * 
+     * @return static 
+     */
+    public function setResponseConfig($value)
     {
-        return $this->merge('response', $value);
+        return $this->merge('response', is_array($value) ? HTTPResponseConfig::create($value) : $value);
     }
 
     public function toArray()
@@ -102,6 +128,13 @@ class TxnRequestBody implements TxnRequestBodyInterface
         ];
     }
 
+    /**
+     * Merge the instance property to modify in the existing properties
+     * 
+     * @param string $attribute 
+     * @param mixed $value 
+     * @return object 
+     */
     protected function merge(string $attribute, $value)
     {
         /**
@@ -112,8 +145,13 @@ class TxnRequestBody implements TxnRequestBodyInterface
         return $object;
     }
 
+    /**
+     * Returns the string representation of the current instance
+     * 
+     * @return string 
+     */
     public function __toString()
     {
-        return JSONEncoder::new()->encode($this->toArray());
+        return (new JSONEncoder)->encode($this->toArray());
     }
 }
