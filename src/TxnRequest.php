@@ -33,12 +33,6 @@ class TxnRequest implements TxnRequestInterface
     private $version;
 
     /**
-     * 
-     * @var TxnRequestCredentialsInterface
-     */
-    private $credentials;
-
-    /**
      * Creates an instance of {@see \Drewlabs\TxnClient\TxnRequest} class
      * 
      * @param mixed $uri 
@@ -51,13 +45,11 @@ class TxnRequest implements TxnRequestInterface
         $uri,
         $method,
         TxnRequestBodyInterface $body,
-        TxnRequestCredentialsInterface $credentials,
         string $version = '1.1'
     ) {
         $this->uri = $uri;
         $this->method = $method;
         $this->body = $body;
-        $this->credentials = $credentials;
         $this->version = $version;
     }
 
@@ -130,28 +122,6 @@ class TxnRequest implements TxnRequestInterface
         return $object;
     }
 
-    public function getCredentials()
-    {
-        return $this->credentials;
-    }
-
-    /**
-     * Copy the request with new request credentials.
-     * 
-     * **Note** Implementation does not modify the original request credentials, 
-     * instead it creates a copy of the object and modify credentials of the copy.
-     * 
-     * @param TxnRequestCredentialsInterface|string $credentialOrKey 
-     * @param string|null $secret 
-     * @return static 
-     */
-    public function withCredentials($credentialOrKey, string $secret = null)
-    {
-        $object = clone $this;
-        $object->credentials = $credentialOrKey instanceof TxnRequestCredentialsInterface ? $credentialOrKey : new Credentials($credentialOrKey, $secret);
-        return $object;
-    }
-
     public function getProtocolVersion()
     {
         return $this->version ?? '1.1';
@@ -181,6 +151,5 @@ class TxnRequest implements TxnRequestInterface
     public function __clone()
     {
         $this->body = clone $this->body;
-        $this->credentials = clone $this->credentials;
     }
 }

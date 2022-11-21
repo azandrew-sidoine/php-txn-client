@@ -21,4 +21,47 @@ interface TxnInterface
      * @return string 
      */
     public function getId();
+
+    /**
+     * Returns the transaction reference
+     * 
+     * @return string 
+     */
+    public function getReference();
+
+    /**
+     * Get the amount property
+     * 
+     * @return float 
+     */
+    public function getAmount();
+
+
+    /**
+     * Get the processors property
+     * 
+     * @return string[]
+     */
+    public function getProcessors();
+
+    /**
+     * Get the currency property
+     * 
+     * @return string 
+     */
+    public function getCurrency();
+    
+    /**
+     * Get the label property
+     * 
+     * @return string|null 
+     */
+    public function getLabel();
+
+    /**
+     * Get the debtor property
+     * 
+     * @return string|null 
+     */
+    public function getDebtor();
 }

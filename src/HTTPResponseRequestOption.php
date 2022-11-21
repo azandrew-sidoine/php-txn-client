@@ -9,7 +9,7 @@ use InvalidArgumentException;
  * 
  * @package Drewlabs\TxnClient
  */
-class HTTPResponseRequestOption
+class HTTPResponseRequestOption implements Arrayable
 {
     use HasContructorFactory;
     /**
@@ -95,5 +95,14 @@ class HTTPResponseRequestOption
     public function getType()
     {
         return $this->type;
+    }
+
+    public function toArray()
+    {
+        return [
+            'key' => $this->getKey(),
+            'value' => $this->getValue(),
+            'type' => $this->getType()
+        ];
     }
 }

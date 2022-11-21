@@ -4,7 +4,7 @@ namespace Drewlabs\TxnClient;
 
 use ReflectionException;
 
-class HTTPResponseConfig
+class HTTPResponseConfig implements Arrayable
 {
     use ArrayInstanciable;
 
@@ -58,7 +58,7 @@ class HTTPResponseConfig
 
     /**
      * 
-     * @var HTTPResponseRequestOption
+     * @var HTTPResponseRequestOption[]
      */
     private $request_options;
 
@@ -232,8 +232,8 @@ class HTTPResponseConfig
     {
         $isArrayList = $value === array_filter($value, 'is_array');
         $value = $isArrayList ? $value : [$value];
-        $this->request_options = array_map(function($option) {
-            return HTTPResponseRequestOption::create($option);
+        $this->request_options = array_map(function ($option) {
+            return !($option instanceof Arrayable) ? HTTPResponseRequestOption::create($option) : $option;
         }, $value);
         return $this;
     }
@@ -329,10 +329,27 @@ class HTTPResponseConfig
     /**
      * Get the Http response request options
      * 
-     * @return HTTPResponseRequestOption 
+     * @return HTTPResponseRequestOption[]
      */
     public function getRequestOptions()
     {
         return $this->request_options;
+    }
+
+    public function toArray()
+    {
+        return [
+            'url' => $this->getUrl(),
+            'redirect_response_url' => $this->getRedirectResponseUrl(),
+            'method' => $this->getMethod(),
+            't_ref_key' => $this->getTxnReferenceKey(),
+            't_time_key' => $this->getTxnTimeKey(),
+            't_amount_key' => $this->getTxnAmountKey(),
+            't_id_key' => $this->getTxnIdKey(),
+            't_processor_id_key' => $this->getTxnProcessorKey(),
+            'options' => array_map(function (HTTPResponseRequestOption $option) {
+                return $option->toArray();
+            }, $this->getRequestOptions())
+        ];
     }
 }

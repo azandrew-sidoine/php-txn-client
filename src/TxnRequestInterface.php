@@ -53,22 +53,6 @@ interface TxnRequestInterface
     public function withBody(TxnRequestBodyInterface $body);
 
     /**
-     * Returns the credentials provided by the instance
-     * 
-     * @return TxnRequestCredentialsInterface 
-     */
-    public function getCredentials();
-
-    /**
-     * Returns an instance with the provided credentials.
-     * 
-     * @param TxnRequestCredentialsInterface|string $credentialOrKey 
-     * @param string|null $secret 
-     * @return mixed 
-     */
-    public function withCredentials($credentialOrKey, string $secret = null);
-
-    /**
      * Return the provided HTTP protocol version.
      * 
      * @return static 
