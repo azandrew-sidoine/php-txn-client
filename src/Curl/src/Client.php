@@ -2,9 +2,7 @@
 
 namespace Drewlabs\Curl;
 
-use Drewlabs\Psr7\Cookies;
 use RuntimeException;
-use Drewlabs\Psr7\Headers;
 use ErrorException;
 use InvalidArgumentException;
 
@@ -66,18 +64,6 @@ class Client
     private $curlHeaderCallback;
 
     /**
-     * 
-     * @var Cookies
-     */
-    private $requestCookies;
-
-    /**
-     * 
-     * @var Headers
-     */
-    private $requestHeaders;
-
-    /**
      * List of event listeners for the current client
      * 
      * @var array
@@ -125,7 +111,7 @@ class Client
      * 
      * @return void 
      */
-    public function execute($data = [])
+    public function send($data = [])
     {
         if (!empty($progressListerners = ($this->listeners['progress'] ?? []))) {
             $this->setOption(CURLOPT_NOPROGRESS, false);
@@ -288,42 +274,6 @@ class Client
     }
 
     /**
-     * Set request cookies
-     * 
-     * @param string $name 
-     * @param string $value 
-     * @return static 
-     */
-    public function setCookies(array $cookies)
-    {
-        if (null === $this->requestCookies) {
-            $this->requestCookies = new Cookies($cookies);
-        } else {
-            foreach ($cookies as $name => $value) {
-                $this->requestCookies->set($name, $value);
-            }
-        }
-        $this->setRequestCookies($this->requestCookies->toArray());
-    }
-
-    /**
-     * Set Headers entries
-     *
-     * @param string[]  $headers
-     */
-    public function setHeaders(array $headers)
-    {
-        if (null === $this->requestHeaders) {
-            $this->requestHeaders = Headers::new($headers);
-        } else {
-            foreach ($headers as $name => $value) {
-                $this->requestHeaders->set($name, $value);
-            }
-        }
-        $this->setRequestHeaders($this->requestHeaders->toArray());
-    }
-
-    /**
      * Set auto referrer
      *
      */
@@ -458,8 +408,6 @@ class Client
      */
     public function release()
     {
-        $this->requestHeaders = null;
-        $this->requestCookies = null;
         $this->curlHeaderCallback = null;
         $this->curlError = null;
         $this->curlErrorMessage = null;
@@ -570,20 +518,19 @@ class Client
     {
         $this->listeners = ['progress' => []];
     }
-
+    
     /**
      * Build the request post data
      * 
      * @param mixed $data 
+     * @param string $contentType 
      * @return string|false|array 
-     * @throws InvalidArgumentException 
      * @throws RuntimeException 
      */
-    private function buildPostData($data)
+    private function buildPostData($data, string $contentType = 'application/json')
     {
         $postData = new PostData($data);
         $builder = new PostDataBuilder($postData);
-        $contentType = $this->requestHeaders['Content-Type'][0] ?? null;
         if (
             (isset($contentType)) &&
             preg_match(self::JSON_PATTERN, $contentType) &&
@@ -594,36 +541,6 @@ class Client
             $builder = $builder->asURLEncoded();
         }
         return $builder->build();
-    }
-
-    /**
-     * Set the curl session headers
-     * 
-     * @param array $requestHeaders 
-     * @return void 
-     */
-    private function setRequestHeaders(array $requestHeaders = [])
-    {
-        $headers = [];
-        foreach ($requestHeaders as $key => $value) {
-            $headers[] = $key . ': ' . implode(', ', $value);
-        }
-        $this->setOption(CURLOPT_HTTPHEADER, $headers);
-    }
-
-
-    /**
-     * 
-     * @param array $cookies 
-     * @return void 
-     */
-    private function setRequestCookies(array $cookies)
-    {
-        if (count($cookies)) {
-            $this->setOption(CURLOPT_COOKIE, implode('; ', array_map(function ($key, $value) {
-                return $key . '=' . $value;
-            }, array_keys($cookies), array_values($cookies))));
-        }
     }
 
     /**

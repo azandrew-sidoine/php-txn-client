@@ -2,10 +2,17 @@
 
 namespace Drewlabs\Curl;
 
+use InvalidArgumentException;
 use ReflectionClass;
 
 class RequestOptions
 {
+    /**
+     * 
+     * @var int
+     */
+    private $timeout;
+
     /**
      * 
      * @var array
@@ -26,12 +33,6 @@ class RequestOptions
 
     /**
      * 
-     * @var boolean|string
-     */
-    private $compress;
-
-    /**
-     * 
      * @var array|object
      */
     private $query;
@@ -48,7 +49,6 @@ class RequestOptions
      * @param array $headers 
      * @param array $body 
      * @param array $query 
-     * @return void 
      */
     public function __construct(array $headers = [], $body = [], $query = [])
     {
@@ -73,7 +73,7 @@ class RequestOptions
      *          // Request query parameters ...
      *      ],
      *      'auth' => ['user', 'pass', 'basic'] // the 3rd option is optional. Defaults to basic,
-     *      'compress' => true
+     *      'encoding' => 'gzip,deflate'
      * ]);
      * ```
      * 
@@ -81,13 +81,22 @@ class RequestOptions
      * @return static 
      * @throws ReflectionException 
      */
-    public static function create(array $properties = null)
+    public static function create(array $properties = [])
     {
         if (is_array($properties)) {
             $instance = (new ReflectionClass(__CLASS__))->newInstanceWithoutConstructor();
             foreach ($properties as $name => $value) {
+                if (null === $value) {
+                    continue;
+                }
+                // Tries to generate a camelcase method name from property name and prefix it with set
+                if (method_exists($instance, $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $name))))) {
+                    \Closure::fromCallable([$instance, $method])->call($instance, $value);
+                    continue;
+                }
                 if (property_exists($instance, $name)) {
                     $instance->{$name} = $value;
+                    continue;
                 }
             }
             return $instance;
@@ -103,6 +112,9 @@ class RequestOptions
      */
     public function setHeaders(array $headers)
     {
+        if (array_keys($headers) === range(0, count($headers) - 1)) {
+            throw new InvalidArgumentException('Request headers must be a dictionary data type with key value binding');
+        }
         $this->headers = $headers;
         return $this;
     }
@@ -142,14 +154,14 @@ class RequestOptions
     /**
      * Set the authentication options
      * 
-     * @param string $user 
+     * @param string|array $user 
      * @param string $password 
      * @param string $type 
-     * @return void 
+     * @return static 
      */
-    public function setAuth(string $user, string $password, $type = 'basic')
+    public function setAuth($user, string $password = null, $type = 'basic')
     {
-        $this->auth = [$user, $password, $type];
+        $this->auth = is_array($user) ? $user : func_get_args();
         return $this;
     }
 
@@ -164,38 +176,16 @@ class RequestOptions
     }
 
     /**
-     * Set the compress option on the request. If true default compression
-     * gzip,defalte will be used, else, the compression algoright passed
-     * as parameter is used
-     * 
-     * @param mixed $value 
-     * @return void 
-     */
-    public function setCompress($value)
-    {
-        $this->compress = $value;
-    }
-
-    /**
-     * Get the request compress options
-     * 
-     * @return bool|string 
-     */
-    public function getCompress()
-    {
-        return $this->compress;
-    }
-
-    /**
      * Set the request query parameter. This query parameter will override
      * the default query used in the psr7 request
      * 
      * @param array $value 
-     * @return void 
+     * @return static 
      */
     public function setQuery(array $value)
     {
         $this->query = $value;
+        return $this;
     }
 
     /**
@@ -206,7 +196,7 @@ class RequestOptions
      */
     public function getQuery()
     {
-        return $this->query;
+        return (array)$this->query;
     }
 
     /**
@@ -229,5 +219,30 @@ class RequestOptions
     public function getEncoding()
     {
         return $this->encoding;
+    }
+
+
+
+    /**
+     * Set timeout configuration value
+     * 
+     * @param int $value 
+     * 
+     * @return static 
+     */
+    public function setTimeout(int $value)
+    {
+        $this->timeout = $value;
+        return $this;
+    }
+
+    /**
+     * Request timeout configuration value
+     * 
+     * @return int|false 
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
     }
 }

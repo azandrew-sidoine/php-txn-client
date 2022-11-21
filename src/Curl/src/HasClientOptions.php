@@ -5,14 +5,43 @@ namespace Drewlabs\Curl;
 use Drewlabs\Psr7\CreatesJSONStream;
 use Drewlabs\Psr7\CreatesMultipartStream;
 use Drewlabs\Psr7\CreatesURLEncodedStream;
+use Drewlabs\Psr7\Uri;
 use Drewlabs\Psr7Stream\LazyStream;
 use Drewlabs\Psr7Stream\Stream;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use RuntimeException;
 
-trait AppendsClientOptions
+trait HasClientOptions
 {
+    /**
+     * 
+     * @var ClientOptions
+     */
+    private $options;
+
+    /**
+     * Returns the request client options
+     * 
+     * @return ClientOptions 
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Client options setter method
+     * 
+     * @param ClientOptions $options 
+     * @return $this 
+     */
+    public function setOptions(ClientOptions $options)
+    {
+        $object = clone $this;
+        $object->options = $options;
+        return $object;
+    }
 
     /**
      * Override psr7 request with request options
@@ -22,16 +51,27 @@ trait AppendsClientOptions
      * @return RequestInterface 
      * @throws InvalidArgumentException 
      */
-    private function overrideRequest(RequestInterface $request, ClientOptions $clientOptions): RequestInterface
+    public function overrideRequest(RequestInterface $request, ClientOptions $clientOptions = null): RequestInterface
     {
-
+        $clientOptions = $clientOptions ?? $this->getOptions();
         $requestOptions = $clientOptions->getRequest();
         if (null === $requestOptions) {
             return $request;
         }
+        $uri = $request->getUri();
+        if (null !== ($baseURL = $clientOptions->getBaseURL())) {
+            $tmpURI = Uri::new($baseURL);
+            // We rebuild the original request query if the base url has changed
+            $uri = $uri->withHost($tmpURI->getHost())
+                ->withFragment($tmpURI->getFragment())
+                ->withPath(empty($path = $tmpURI->getPath()) ? $uri->getPath() : $path)
+                ->withPort(empty($port = $tmpURI->getPort()) ? $uri->getPort() : $port)
+                ->withQuery(empty($query = $tmpURI->getQuery()) ? $uri->getQuery() : $query)
+                ->withScheme(empty($sheme = $tmpURI->getScheme()) ? $uri->getScheme() : $sheme)
+                ->withUserInfo(empty($userInfo = $tmpURI->getUserInfo()) ? $uri->getUserInfo() : $userInfo);
+        }
         // Get the request uri in temparary variable and check later if it changes 
         // to update the request query
-        $uri = $request->getUri();
         $body = $request->getBody();
         $contentTypeHeader = empty($result = $request->getHeader('Content-Type')) ? '' : implode(',', $result);
 
@@ -46,7 +86,7 @@ trait AppendsClientOptions
                 $contentTypeHeader = (string)$value;
             }
         }
-        $optionsBody = $requestOptions->getBody();
+        $optionsBody = $requestOptions->getBody() ?? [];
         if (!empty($contentTypeHeader) && preg_match('/^multipart\/form-data/', $contentTypeHeader) && !empty($optionsBody)) {
             // Handle request of multipart http request
             $createsStream = new CreatesMultipartStream($optionsBody);
@@ -61,7 +101,6 @@ trait AppendsClientOptions
             $body = new LazyStream(new CreatesURLEncodedStream($optionsBody));
             $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
-
         if (!empty($query = $requestOptions->getQuery())) {
             if (\is_array($query)) {
                 $query = \http_build_query($query, '', '&', \PHP_QUERY_RFC3986);
@@ -105,7 +144,7 @@ trait AppendsClientOptions
      */
     private function appendClientOptions(RequestInterface $request, ClientOptions $clientOptions, array $output)
     {
-        if (null !== ($verify = $clientOptions->verify())) {
+        if (null !== ($verify = $clientOptions->getVerify())) {
             if ($verify === false) {
                 unset($output[\CURLOPT_CAINFO]);
                 $output[\CURLOPT_SSL_VERIFYHOST] = 0;
@@ -134,8 +173,16 @@ trait AppendsClientOptions
             }
         }
 
-        $requestOptions = $clientOptions->getRequest();
+        $requestOptions = $clientOptions->getRequest() ?? new RequestOptions();
 
+        // Request Timeout
+        $timeoutRequiresNoSignal = false;
+        if ($timeout = $requestOptions->getTimeout()) {
+            $timeoutRequiresNoSignal |= $timeout < 1;
+            $output[\CURLOPT_TIMEOUT_MS] = $timeout * 1000;
+        }
+
+        // Request encoding
         if ($requestOptions->getEncoding()) {
             if ($accept = $request->getHeaderLine('Accept-Encoding')) {
                 $output[\CURLOPT_ENCODING] = $accept;
@@ -145,17 +192,24 @@ trait AppendsClientOptions
             }
         }
 
-        if (empty($clientOptions->sink())) {
-            $clientOptions->sink(Stream::new('', 'w+'));
+        // Request cookies
+        if ($cookies = $clientOptions->getCookies()) {
+            $cookies = is_array($cookies) ? $cookies : ($cookies ? $cookies->toArray() : []);
+            $output[CURLOPT_COOKIE] = implode('; ', array_map(function ($key, $value) {
+                return $key . '=' . $value;
+            }, array_keys($cookies), array_values($cookies)));
         }
-        $sink = $clientOptions->sink();
+
+        if (empty($clientOptions->getSink())) {
+            $clientOptions->setSink(Stream::new('', 'w+'));
+        }
+        $sink = $clientOptions->getSink();
         if (!\is_string($sink)) {
             $sink = Stream::new($sink);
         } elseif (!\is_dir(\dirname($sink))) {
             // Ensure that the directory exists before failing in curl.
             throw new \RuntimeException(\sprintf('Directory %s does not exist for sink value of %s', \dirname($sink), $sink));
         } else {
-            // TODO : Provide a lazy stream implementation
             $sink = new LazyStream(function () use ($sink) {
                 return Stream::new($sink, 'w+');
             });
@@ -164,14 +218,8 @@ trait AppendsClientOptions
             return $sink->write($write);
         };
 
-        $timeoutRequiresNoSignal = false;
-        if ($timeout = $clientOptions->timeout()) {
-            $timeoutRequiresNoSignal |= $timeout < 1;
-            $output[\CURLOPT_TIMEOUT_MS] = $timeout * 1000;
-        }
-
         // CURL default value is CURL_IPRESOLVE_WHATEVER
-        if ($ip = $clientOptions->forceResolveIp()) {
+        if ($ip = $clientOptions->getForceResolveIp()) {
             if ('v4' === $ip) {
                 $output[\CURLOPT_IPRESOLVE] = \CURL_IPRESOLVE_V4;
             } elseif ('v6' === $ip) {
@@ -188,7 +236,7 @@ trait AppendsClientOptions
             $output[\CURLOPT_NOSIGNAL] = true;
         }
 
-        if ($proxy = $clientOptions->proxy()) {
+        if ($proxy = $clientOptions->getProxy()) {
             $output[CURLOPT_PROXY] = $proxy[0];
             if (isset($proxy[1])) {
                 $output[CURLOPT_PROXYPORT] = $proxy[1];
@@ -198,7 +246,7 @@ trait AppendsClientOptions
             }
         }
 
-        if ($cert = $clientOptions->cert()) {
+        if ($cert = $clientOptions->getCert()) {
             $certFile = $cert[0];
             if (count($cert) === 2) {
                 $output[\CURLOPT_SSLCERTPASSWD] = $cert[1];
@@ -215,7 +263,7 @@ trait AppendsClientOptions
             $output[\CURLOPT_SSLCERT] = $certFile;
         }
 
-        if ($sslKeyOptions = $clientOptions->sslKey()) {
+        if ($sslKeyOptions = $clientOptions->getSslKey()) {
             if (\count($sslKeyOptions) === 2) {
                 [$sslKey, $output[\CURLOPT_SSLKEYPASSWD]] = $sslKeyOptions;
             } else {
@@ -227,7 +275,7 @@ trait AppendsClientOptions
             $output[\CURLOPT_SSLKEY] = $sslKey;
         }
 
-        if ($progress = $clientOptions->progress()) {
+        if ($progress = $clientOptions->getProgress()) {
             if (!\is_callable($progress)) {
                 throw new \InvalidArgumentException('progress client option must be callable');
             }
