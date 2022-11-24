@@ -83,8 +83,8 @@ final class Client implements ClientInterface
     /**
      * Set the response endpoint and redirect endpoint for the current transaction
      * 
-     * @param string $url 
-     * @param string|null $redirect_url 
+     * @param string $url HTTP Response endpoint URL
+     * @param string|null $redirect_url HTTP Redirect endpoint URL
      * 
      * @return static 
      */
@@ -95,7 +95,7 @@ final class Client implements ClientInterface
         return $this;
     }
 
-    public function createInvoice(
+    public function createTxn(
         $request,
         float $amount = null,
         array $processors = null,
