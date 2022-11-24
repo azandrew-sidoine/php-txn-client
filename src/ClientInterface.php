@@ -17,17 +17,17 @@ interface ClientInterface
      * InvalidArgumentException is thrown by the method
      * 
      * @param TxnRequestInterface|TxnInterface|TxnRequestBodyInterface|string $request Txn Instance or Txn Rrequest instance or an invoice reference
-     * @param float|null $amount 
-     * @param array|null $processors 
-     * @param string $currency 
-     * @param string|null $label 
-     * @param string|null $debtor 
+     * @param float|null $amount                                                       Txn amount 
+     * @param array|null $processors                                                   List of processors that will handle the tnx
+     * @param string $currency                                                         The currency in which the Txn is being paid
+     * @param string|null $label                                                       Txn label used as title for the payment page
+     * @param string|null $debtor                                                      Label given to the entity who is paying the Txn
      * @return TxnInterface 
      * 
      * @throws InvalidArgumentException
      * @throws TxnRequestException
      */
-    public function createInvoice(
+    public function createTxn(
         $request,
         float $amount = null,
         array $processors = null,
