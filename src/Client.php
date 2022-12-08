@@ -60,7 +60,7 @@ final class Client implements ClientInterface
      */
     public function __construct(string $host = null, string $clientid = null, string $clientsecret = null)
     {
-        $this->curl = new CURLClient(['url' => $host]);
+        $this->curl = new CURLClient($host);
         if ($clientsecret) {
             $this->credentials = ['clientid' => $clientid, 'clientsecret' => $clientsecret];
         }

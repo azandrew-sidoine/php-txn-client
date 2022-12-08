@@ -1,4 +1,4 @@
-name: CI - Test Psr7 implementations
+name: CI - Txn Client Tests
 
 on:
   - pull_request
