@@ -3,6 +3,7 @@ Notes.md
 /vendor/
 /vscode/
 index.php
+/index.dev.php
 cache/
 /.bin
 docs.php
