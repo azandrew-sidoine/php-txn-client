@@ -1,63 +1,63 @@
 <?php
 
-namespace Drewlabs\TxnClient;
+declare(strict_types=1);
 
-use ReflectionException;
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Drewlabs\TxnClient;
 
 class HTTPResponseConfig implements HTTPResponseConfigInterface
 {
     use ArrayInstanciable;
 
     /**
-     * 
      * @var string
      */
     private $url;
 
     /**
-     * 
      * @var string
      */
     private $redirect_response_url;
 
     /**
-     * 
      * @var string
      */
     private $method;
 
     /**
-     * 
      * @var string
      */
     private $txn_reference_key;
 
     /**
-     * 
      * @var string
      */
     private $txn_time_key;
 
     /**
-     * 
      * @var string
      */
     private $txn_amount_key;
 
     /**
-     * 
      * @var string
      */
     private $txn_id_key;
 
     /**
-     * 
      * @var string
      */
     private $txn_processor_key;
 
     /**
-     * 
      * @var HTTPResponseRequestOption[]
      */
     private $request_options;
@@ -66,16 +66,15 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     {
     }
 
-
     /**
-     * Create a response configuration instance from attributes array
-     * 
+     * Create a response configuration instance from attributes array.
+     *
      * ```php
-     * 
+     *
      * <?php
-     * 
+     *
      * use namespace Drewlabs\TxnClient\HTTPResponseConfig;
-     * 
+     *
      * $config = HTTPResponseConfig::create(
      *      [
      *          'method' => 'GET',
@@ -97,23 +96,25 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
      *      ]
      * );
      * ```
-     * @param array $attributes 
-     * @return static 
-     * @throws ReflectionException 
+     *
+     * @throws \ReflectionException
+     *
+     * @return static
      */
     public static function create(array $attributes = [])
     {
         $attributes = array_merge(static::defaults() ?? [], $attributes);
-        if (is_array($attributes)) {
+        if (\is_array($attributes)) {
             return self::createFromArray($attributes);
         }
+
         return new static();
     }
 
     /**
-     * Returns the default http response configuration array
-     * 
-     * @return string[] 
+     * Returns the default http response configuration array.
+     *
+     * @return string[]
      */
     public static function defaults()
     {
@@ -128,123 +129,122 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Set the url property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the url property.
+     *
+     * @return $this
      */
     public function setUrl(string $value)
     {
         $this->url = $value;
+
         return $this;
     }
 
     /**
-     * Set the redirect response url property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the redirect response url property.
+     *
+     * @return $this
      */
     public function setRedirectResponseUrl(string $value)
     {
         $this->redirect_response_url = $value;
+
         return $this;
     }
 
     /**
-     * Set the method property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the method property.
+     *
+     * @return $this
      */
     public function setMethod(string $value)
     {
         $this->method = $value;
+
         return $this;
     }
 
     /**
-     * Set the txn reference key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the txn reference key property.
+     *
+     * @return $this
      */
     public function setTxnReferenceKey(string $value)
     {
         $this->txn_reference_key = $value;
+
         return $this;
     }
 
     /**
-     * Set the txn time key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the txn time key property.
+     *
+     * @return $this
      */
     public function setTxnTimeKey(string $value)
     {
         $this->txn_time_key = $value;
+
         return $this;
     }
 
     /**
-     * Set the txn amount key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the txn amount key property.
+     *
+     * @return $this
      */
     public function setTxnAmountKey(string $value)
     {
         $this->txn_amount_key = $value;
+
         return $this;
     }
 
     /**
-     * Set the txn id key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the txn id key property.
+     *
+     * @return $this
      */
     public function setTxnIdKey(string $value)
     {
         $this->txn_id_key = $value;
+
         return $this;
     }
 
     /**
-     * Set the txn processor  property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Set the txn processor  property.
+     *
+     * @return $this
      */
     public function setTxnProcessorKey(string $value)
     {
         $this->txn_processor_key = $value;
+
         return $this;
     }
 
     /**
-     * Set the Http response request options
-     * 
-     * @param array<array>|Arrayable $value 
-     * @return void 
+     * Set the Http response request options.
+     *
+     * @param array<array>|Arrayable $value
+     *
+     * @return void
      */
     public function setRequestOptions($value)
     {
-        $value = is_array($value) ? $value : [$value];
+        $value = \is_array($value) ? $value : [$value];
         $isArrayList = $value === array_filter($value, 'is_array');
         $value = $isArrayList ? $value : [$value];
-        $this->request_options = array_map(function ($option) {
-            return !($option instanceof Arrayable) ? HTTPResponseRequestOption::create($option) : $option;
-        }, $value);
+        $this->request_options = array_map(static fn ($option) => !($option instanceof Arrayable) ? HTTPResponseRequestOption::create($option) : $option, $value);
+
         return $this;
     }
 
     /**
-     * Get the url property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the url property.
+     *
+     * @return $this
      */
     public function getUrl()
     {
@@ -252,10 +252,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the redirect_response_url property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the redirect_response_url property.
+     *
+     * @return $this
      */
     public function getRedirectResponseUrl()
     {
@@ -263,10 +262,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the method property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the method property.
+     *
+     * @return $this
      */
     public function getMethod()
     {
@@ -274,10 +272,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the txn_reference_key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the txn_reference_key property.
+     *
+     * @return $this
      */
     public function getTxnReferenceKey()
     {
@@ -285,10 +282,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the txn_time_key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the txn_time_key property.
+     *
+     * @return $this
      */
     public function getTxnTimeKey()
     {
@@ -296,10 +292,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the txn_amount_key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the txn_amount_key property.
+     *
+     * @return $this
      */
     public function getTxnAmountKey()
     {
@@ -307,10 +302,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the txn_id_key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the txn_id_key property.
+     *
+     * @return $this
      */
     public function getTxnIdKey()
     {
@@ -318,10 +312,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the txn_processor_key property
-     * 
-     * @param string $value 
-     * @return $this 
+     * Get the txn_processor_key property.
+     *
+     * @return $this
      */
     public function getTxnProcessorKey()
     {
@@ -329,8 +322,8 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Get the Http response request options
-     * 
+     * Get the Http response request options.
+     *
      * @return HTTPResponseRequestOption[]
      */
     public function getRequestOptions()
@@ -349,9 +342,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
             't_amount_key' => $this->getTxnAmountKey(),
             't_id_key' => $this->getTxnIdKey(),
             't_processor_id_key' => $this->getTxnProcessorKey(),
-            'options' => array_map(function (HTTPResponseRequestOption $option) {
-                return $option->toArray();
-            }, $this->getRequestOptions())
+            'options' => array_map(static fn (HTTPResponseRequestOption $option) => $option->toArray(), $this->getRequestOptions()),
         ];
     }
 }

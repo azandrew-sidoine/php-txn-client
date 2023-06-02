@@ -1,42 +1,45 @@
 <?php
 
-namespace Drewlabs\TxnClient;
+declare(strict_types=1);
 
-use InvalidArgumentException;
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Drewlabs\TxnClient;
 
 /**
  * @method static HTTPResponseRequestOption new(string $key, string $value, $type = 1)
- * 
- * @package Drewlabs\TxnClient
  */
 class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
 {
     use HasContructorFactory;
     /**
-     * 
      * @var int
      */
     private $type;
 
     /**
-     * 
      * @var string
      */
     private $key;
 
     /**
-     * 
      * @var string
      */
     private $value;
 
     /**
-     * Creates a new {@see \Drewlabs\TxnClient\HTTPResponseRequestOption} instance
-     * 
-     * @param string $key 
-     * @param string $value 
-     * @param int $type 
-     * @return void 
+     * Creates a new {@see \Drewlabs\TxnClient\HTTPResponseRequestOption} instance.
+     *
+     * @param int $type
+     *
+     * @return void
      */
     public function __construct(string $key, string $value, $type = 1)
     {
@@ -45,46 +48,37 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
         $this->type = $type ?? 1;
     }
 
-
     /**
-     * Creates a new instance of {@see \Drewlabs\TxnClient\HTTPResponseRequestOption} classs
-     * 
-     * @param self|array $options 
-     * @return static 
-     * @throws InvalidArgumentException 
+     * Creates a new instance of {@see \Drewlabs\TxnClient\HTTPResponseRequestOption} classs.
+     *
+     * @param self|array $options
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return static
      */
     public static function create($options)
     {
-        if (is_array($options) && isset($options['key']) && isset($options['value'])) {
+        if (\is_array($options) && isset($options['key'], $options['value'])) {
             return new static($options['key'], $options['value'], $options['type'] ?? 1);
         }
-        if (is_array($options) && (count($options) >= 2) && ($options === array_filter($options, 'is_scalar'))) {
+        if (\is_array($options) && (\count($options) >= 2) && ($options === array_filter($options, 'is_scalar'))) {
             return new static(...array_values($options));
         }
-        if (is_array($options) && count($options) === 1 && (($options[0] ?? null) instanceof self)) {
+        if (\is_array($options) && 1 === \count($options) && (($options[0] ?? null) instanceof self)) {
             return $options[0]->copy();
         }
-        if (!($options instanceof HTTPResponseRequestOption)) {
-            throw new InvalidArgumentException(__METHOD__ . ' expect an insance of ' . __CLASS__ . ' or a PHP array as parameter, got ' . (null !== $options && is_object($options) ? get_class($options) : gettype($options)));
+        if (!($options instanceof self)) {
+            throw new \InvalidArgumentException(__METHOD__.' expect an insance of '.__CLASS__.' or a PHP array as parameter, got '.(null !== $options && \is_object($options) ? $options::class : \gettype($options)));
         }
+
         return $options->copy();
     }
 
     /**
-     * Creates a new instance of the current class by copying attrributes values from the provided object
-     * 
-     * @param HTTPResponseRequestOption $option 
-     * @return static 
-     */
-    private function copy()
-    {
-        return new static($this->getKey(), $this->getValue(), $this->getType() ?? 1);
-    }
-
-    /**
-     * Return the response request option key
-     * 
-     * @return string 
+     * Return the response request option key.
+     *
+     * @return string
      */
     public function getKey()
     {
@@ -92,9 +86,9 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
     }
 
     /**
-     * Return the response request option value
-     * 
-     * @return string 
+     * Return the response request option value.
+     *
+     * @return string
      */
     public function getValue()
     {
@@ -102,9 +96,9 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
     }
 
     /**
-     * Return the response request option type
-     * 
-     * @return string 
+     * Return the response request option type.
+     *
+     * @return string
      */
     public function getType()
     {
@@ -116,7 +110,17 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
         return [
             'key' => $this->getKey(),
             'value' => $this->getValue(),
-            'type' => $this->getType()
+            'type' => $this->getType(),
         ];
+    }
+
+    /**
+     * Creates a new instance of the current class by copying attrributes values from the provided object.
+     *
+     * @return static
+     */
+    private function copy()
+    {
+        return new static($this->getKey(), $this->getValue(), $this->getType() ?? 1);
     }
 }

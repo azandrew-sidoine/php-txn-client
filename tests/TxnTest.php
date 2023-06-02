@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use Drewlabs\TxnClient\Tests\Utils;
 use Drewlabs\TxnClient\Txn;
 use Drewlabs\TxnClient\TxnInterface;
@@ -20,11 +31,10 @@ class TxnTest extends TestCase
         $processors = ['Ecobank'];
         $txn = new Txn($ref, $amount, $processors);
 
-        $this->assertEquals($ref, $txn->getReference());
-        $this->assertEquals($amount, $txn->getAmount());
-        $this->assertEquals($processors, $txn->getProcessors());
+        $this->assertSame($ref, $txn->getReference());
+        $this->assertSame($amount, $txn->getAmount());
+        $this->assertSame($processors, $txn->getProcessors());
     }
-
 
     public function test_txn_immutability()
     {
@@ -55,19 +65,18 @@ class TxnTest extends TestCase
             ->setLabel('TEST INVOICE PAYMENT')
             ->setDebtor('AZLABS\'s SARL U.')
             ->setProcessors(['flooz']);
-        $this->assertEquals($txnid, $txn2->getId());
-        $this->assertEquals('TR980-97348-98742O', $txn2->getReference());
-        $this->assertEquals(70500, $txn2->getAmount());
-        $this->assertEquals('http://127.0.0.1:7000/payment.php', $txn2->getPaymentUrl());
-        $this->assertEquals('USD', $txn2->getCurrency());
-        $this->assertEquals('TEST INVOICE PAYMENT', $txn2->getLabel());
-        $this->assertEquals('AZLABS\'s SARL U.', $txn2->getDebtor());
-        $this->assertEquals(['flooz'], $txn2->getProcessors());
+        $this->assertSame($txnid, $txn2->getId());
+        $this->assertSame('TR980-97348-98742O', $txn2->getReference());
+        $this->assertSame(round(70500, 2), round($txn2->getAmount(), 2));
+        $this->assertSame('http://127.0.0.1:7000/payment.php', $txn2->getPaymentUrl());
+        $this->assertSame('USD', $txn2->getCurrency());
+        $this->assertSame('TEST INVOICE PAYMENT', $txn2->getLabel());
+        $this->assertSame('AZLABS\'s SARL U.', $txn2->getDebtor());
+        $this->assertSame(['flooz'], $txn2->getProcessors());
 
-
-        $this->assertEquals('TR8204-8924JKOFE', $txn->getReference());
-        $this->assertEquals(52000, $txn->getAmount());
-        $this->assertEquals(['TestProcessor'], $txn->getProcessors());
+        $this->assertSame('TR8204-8924JKOFE', $txn->getReference());
+        $this->assertSame(round(52000, 2), round($txn->getAmount(), 2));
+        $this->assertSame(['TestProcessor'], $txn->getProcessors());
         $this->assertTrue(null === $txn->getPaymentUrl());
         $this->assertTrue('XOF' === $txn->getCurrency());
         $this->assertTrue(null === $txn->getLabel());

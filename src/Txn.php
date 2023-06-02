@@ -1,82 +1,88 @@
 <?php
 
-namespace Drewlabs\TxnClient;
+declare(strict_types=1);
 
-use InvalidArgumentException;
-use Stringable;
-use UnexpectedValueException;
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Drewlabs\TxnClient;
 
 class Txn implements TxnInterface
 {
     use ArrayInstanciable;
 
     /**
-     * Txn payment url property
-     * 
+     * Txn payment url property.
+     *
      * @var string
      */
     private $payment_url;
 
     /**
-     * Txn id property
-     * 
+     * Txn id property.
+     *
      * @var string
      */
     private $id;
 
     /**
-     * Txn reference property
-     * 
+     * Txn reference property.
+     *
      * @var string
      */
     private $reference;
 
     /**
-     * Txn amount property
-     * 
+     * Txn amount property.
+     *
      * @var float
      */
     private $amount;
 
     /**
-     * Txn currency property
-     * 
+     * Txn currency property.
+     *
      * @var string
      */
     private $currency;
 
     /**
-     * Txn processors property
-     * 
+     * Txn processors property.
+     *
      * @var string[]
      */
     private $processors;
 
     /**
-     * Txn label property
-     * 
+     * Txn label property.
+     *
      * @var string|null
      */
     private $label;
 
     /**
-     * Txn debtor property
-     * 
+     * Txn debtor property.
+     *
      * @var string|null
      */
     private $debtor;
 
     /**
-     * Creates an instance of {@see \Drewlabs\TxnClient\Txn} class
-     * 
-     * @param string $reference 
-     * @param float|int $amount
-     * @param string[] $processors
-     * @param string $currency 
-     * @param string $label 
-     * @param string $debtor 
-     * @param string|int $id 
-     * @param string $payment_url 
+     * Creates an instance of {@see \Drewlabs\TxnClient\Txn} class.
+     *
+     * @param float|int  $amount
+     * @param string[]   $processors
+     * @param string     $currency
+     * @param string     $label
+     * @param string     $debtor
+     * @param string|int $id
+     * @param string     $payment_url
      */
     public function __construct(
         string $reference,
@@ -93,38 +99,38 @@ class Txn implements TxnInterface
         $this->reference = $reference;
         $this->currency = $currency ?? 'XOF';
         $this->amount = $amount;
-        $this->processors = array_map(function ($processor) {
-            return (string)$processor;
-        }, $processors ?? []);
+        $this->processors = array_map(static fn ($processor) => (string) $processor, $processors ?? []);
         $this->label = $label;
         $this->debtor = $debtor;
     }
 
     /**
-     * Creates {@see \Drewlabs\TxnClient\Txn} instance from json structure (dictionnary/object) 
-     * 
-     * @param object|array $attributes 
-     * @return self 
+     * Creates {@see \Drewlabs\TxnClient\Txn} instance from json structure (dictionnary/object).
+     *
+     * @param object|array $attributes
+     *
+     * @return self
      */
     public static function create($attributes)
     {
-        if (is_object($attributes)) {
+        if (\is_object($attributes)) {
             $attributes = get_object_vars($attributes);
         }
-        if (!is_array($attributes)) {
-            throw new InvalidArgumentException("Expected PHP array or object type, got " . (is_object($attributes) && !is_null($attributes) ? get_class($attributes) : gettype($attributes)));
-        };
-        if (is_array($attributes)) {
+        if (!\is_array($attributes)) {
+            throw new \InvalidArgumentException('Expected PHP array or object type, got '.(\is_object($attributes) && null !== $attributes ? $attributes::class : \gettype($attributes)));
+        }
+        if (\is_array($attributes)) {
             return self::createFromArray($attributes);
         }
-        throw new UnexpectedValueException('Expect parameter of Txn::create() to be an array, ');
+        throw new \UnexpectedValueException('Expect parameter of Txn::create() to be an array, ');
     }
 
     /**
-     * Set the txn id property
-     * 
-     * @param string|int $value 
-     * @return static 
+     * Set the txn id property.
+     *
+     * @param string|int $value
+     *
+     * @return static
      */
     public function setId($value)
     {
@@ -132,63 +138,56 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Returns the txn payment url 
-     * 
-     * @return static 
+     * Returns the txn payment url.
+     *
+     * @return static
      */
     public function setPaymentUrl(string $url)
     {
         if (false === ($components = @parse_url($url))) {
-            throw new UnexpectedValueException('$url parameter must be a valid resource url');
+            throw new \UnexpectedValueException('$url parameter must be a valid resource url');
         }
-        if (!in_array(strtolower($components['scheme'] ?? ''), ['http', 'https'])) {
-            throw new UnexpectedValueException('Payment URL must be a valid HTTP resource URL');
+        if (!\in_array(strtolower($components['scheme'] ?? ''), ['http', 'https'], true)) {
+            throw new \UnexpectedValueException('Payment URL must be a valid HTTP resource URL');
         }
+
         return $this->merge('payment_url', $url);
     }
 
     /**
-     * Returns the transaction reference
-     * 
-     * @param string $ref 
-     * @return static 
+     * Returns the transaction reference.
+     *
+     * @return static
      */
     public function setReference(string $ref)
     {
         return $this->merge('reference', $ref);
     }
 
-
     /**
-     * Set the amount property
-     * 
-     * @param float $value 
-     * @return static 
+     * Set the amount property.
+     *
+     * @return static
      */
     public function setAmount(float $amount)
     {
         return $this->merge('amount', $amount);
     }
 
-
     /**
-     * Set the processors property
-     * 
-     * @param array<string> $value 
-     * @return static 
+     * Set the processors property.
+     *
+     * @return static
      */
     public function setProcessors(array $processors)
     {
-        return $this->merge('processors', array_map(function ($processor) {
-            return (string)$processor;
-        }, $processors ?? []));
+        return $this->merge('processors', array_map(static fn ($processor) => (string) $processor, $processors ?? []));
     }
 
     /**
-     * Set the currency property
-     * 
-     * @param string $value 
-     * @return static 
+     * Set the currency property.
+     *
+     * @return static
      */
     public function setCurrency(string $value)
     {
@@ -196,10 +195,9 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Set the label property
-     * 
-     * @param string $value 
-     * @return static 
+     * Set the label property.
+     *
+     * @return static
      */
     public function setLabel(string $value)
     {
@@ -207,11 +205,11 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Set the response config of the current request object
-     * 
-     * @param Arrayable $value 
-     * 
-     * @return static 
+     * Set the response config of the current request object.
+     *
+     * @param Arrayable $value
+     *
+     * @return static
      */
     public function setDebtor(string $value)
     {
@@ -219,26 +217,9 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Merge the instance property to modify in the existing properties
-     * 
-     * @param string $attribute 
-     * @param mixed $value 
-     * @return object 
-     */
-    protected function merge(string $attribute, $value)
-    {
-        /**
-         * @var object|\stdClass
-         */
-        $object = clone ($this);
-        $object->{$attribute} = $value;
-        return $object;
-    }
-
-    /**
-     * Returns the txn id
-     * 
-     * @return string 
+     * Returns the txn id.
+     *
+     * @return string
      */
     public function getId()
     {
@@ -246,9 +227,9 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Returns the txn payment url 
-     * 
-     * @return string|Stringable 
+     * Returns the txn payment url.
+     *
+     * @return string|\Stringable
      */
     public function getPaymentUrl()
     {
@@ -256,9 +237,9 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Returns the transaction reference
-     * 
-     * @return string 
+     * Returns the transaction reference.
+     *
+     * @return string
      */
     public function getReference()
     {
@@ -266,19 +247,18 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Get the amount property
-     * 
-     * @return float 
+     * Get the amount property.
+     *
+     * @return float
      */
     public function getAmount()
     {
         return $this->amount;
     }
 
-
     /**
-     * Get the processors property
-     * 
+     * Get the processors property.
+     *
      * @return string[]
      */
     public function getProcessors()
@@ -287,9 +267,9 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Get the currency property
-     * 
-     * @return string 
+     * Get the currency property.
+     *
+     * @return string
      */
     public function getCurrency()
     {
@@ -297,9 +277,9 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Get the label property
-     * 
-     * @return string|null 
+     * Get the label property.
+     *
+     * @return string|null
      */
     public function getLabel()
     {
@@ -307,12 +287,30 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Get the debtor property
-     * 
-     * @return string|null 
+     * Get the debtor property.
+     *
+     * @return string|null
      */
     public function getDebtor()
     {
         return $this->debtor;
+    }
+
+    /**
+     * Merge the instance property to modify in the existing properties.
+     *
+     * @param mixed $value
+     *
+     * @return object
+     */
+    protected function merge(string $attribute, $value)
+    {
+        /**
+         * @var object|\stdClass
+         */
+        $object = clone $this;
+        $object->{$attribute} = $value;
+
+        return $object;
     }
 }
