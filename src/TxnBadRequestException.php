@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Drewlabs\TxnClient;
 
+use Psr\Http\Message\RequestInterface;
+
 class TxnBadRequestException extends TxnRequestException
 {
     private $errors;
@@ -20,9 +22,9 @@ class TxnBadRequestException extends TxnRequestException
     /**
      * Creates a class exceptions.
      */
-    public function __construct(array $errors, string $message, int $code = 422)
+    public function __construct(RequestInterface $request, array $errors, string $message, int $code = 422)
     {
-        parent::__construct($message, $code);
+        parent::__construct($request, $code, [], $message);
         $this->errors = $errors;
     }
 

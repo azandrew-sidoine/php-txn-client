@@ -104,6 +104,11 @@ class Txn implements TxnInterface
         $this->debtor = $debtor;
     }
 
+    public function clone()
+    {
+        return clone $this;
+    }
+
     /**
      * Creates {@see \Drewlabs\TxnClient\Txn} instance from json structure (dictionnary/object).
      *
@@ -117,7 +122,7 @@ class Txn implements TxnInterface
             $attributes = get_object_vars($attributes);
         }
         if (!\is_array($attributes)) {
-            throw new \InvalidArgumentException('Expected PHP array or object type, got '.(\is_object($attributes) && null !== $attributes ? $attributes::class : \gettype($attributes)));
+            throw new \InvalidArgumentException('Expected PHP array or object type, got ' . (\is_object($attributes) && null !== $attributes ? $attributes::class : \gettype($attributes)));
         }
         if (\is_array($attributes)) {
             return self::createFromArray($attributes);
@@ -301,14 +306,11 @@ class Txn implements TxnInterface
      *
      * @param mixed $value
      *
-     * @return object
+     * @return static
      */
     protected function merge(string $attribute, $value)
     {
-        /**
-         * @var object|\stdClass
-         */
-        $object = clone $this;
+        $object = $this->clone();
         $object->{$attribute} = $value;
 
         return $object;

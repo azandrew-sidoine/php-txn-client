@@ -35,4 +35,11 @@ interface HTTPResponseRequestOptionInterface extends Arrayable
      * @return string
      */
     public function getType();
+
+    /**
+     * Clone the current object
+     * 
+     * @return static 
+     */
+    public function clone();
 }

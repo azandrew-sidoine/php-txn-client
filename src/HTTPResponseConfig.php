@@ -128,10 +128,24 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
         ];
     }
 
+    public function clone()
+    {
+        return clone $this;
+    }
+
+    public function __clone()
+    {
+        $this->request_options = array_map(function(HTTPResponseRequestOptionInterface $option) {
+            return $option->clone();
+        }, array_filter($this->request_options ?? [], function($option) {
+            return null !== $option;
+        }));
+    }
+
     /**
      * Set the url property.
      *
-     * @return $this
+     * @return static
      */
     public function setUrl(string $value)
     {
@@ -143,7 +157,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Set the redirect response url property.
      *
-     * @return $this
+     * @return static
      */
     public function setRedirectResponseUrl(string $value)
     {
@@ -155,7 +169,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Set the method property.
      *
-     * @return $this
+     * @return static
      */
     public function setMethod(string $value)
     {
@@ -167,7 +181,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Set the txn reference key property.
      *
-     * @return $this
+     * @return static
      */
     public function setTxnReferenceKey(string $value)
     {
@@ -179,7 +193,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Set the txn time key property.
      *
-     * @return $this
+     * @return static
      */
     public function setTxnTimeKey(string $value)
     {
@@ -191,7 +205,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Set the txn amount key property.
      *
-     * @return $this
+     * @return static
      */
     public function setTxnAmountKey(string $value)
     {
@@ -203,7 +217,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Set the txn id key property.
      *
-     * @return $this
+     * @return static
      */
     public function setTxnIdKey(string $value)
     {
@@ -215,7 +229,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Set the txn processor  property.
      *
-     * @return $this
+     * @return static
      */
     public function setTxnProcessorKey(string $value)
     {
@@ -229,7 +243,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
      *
      * @param array<array>|Arrayable $value
      *
-     * @return void
+     * @return static
      */
     public function setRequestOptions($value)
     {
@@ -244,7 +258,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the url property.
      *
-     * @return $this
+     * @return string
      */
     public function getUrl()
     {
@@ -254,7 +268,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the redirect_response_url property.
      *
-     * @return $this
+     * @return string
      */
     public function getRedirectResponseUrl()
     {
@@ -264,7 +278,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the method property.
      *
-     * @return $this
+     * @return string
      */
     public function getMethod()
     {
@@ -274,7 +288,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the txn_reference_key property.
      *
-     * @return $this
+     * @return string
      */
     public function getTxnReferenceKey()
     {
@@ -284,7 +298,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the txn_time_key property.
      *
-     * @return $this
+     * @return string
      */
     public function getTxnTimeKey()
     {
@@ -294,7 +308,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the txn_amount_key property.
      *
-     * @return $this
+     * @return string
      */
     public function getTxnAmountKey()
     {
@@ -304,7 +318,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the txn_id_key property.
      *
-     * @return $this
+     * @return string
      */
     public function getTxnIdKey()
     {
@@ -314,7 +328,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the txn_processor_key property.
      *
-     * @return $this
+     * @return string
      */
     public function getTxnProcessorKey()
     {

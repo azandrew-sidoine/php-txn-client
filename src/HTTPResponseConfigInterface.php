@@ -23,6 +23,13 @@ interface HTTPResponseConfigInterface extends Arrayable
     public function getUrl();
 
     /**
+     * Clone the current object
+     * 
+     * @return static 
+     */
+    public function clone();
+
+    /**
      * Get the Http response request options.
      *
      * @return HTTPResponseRequestOption[]

@@ -66,13 +66,13 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
             return new static(...array_values($options));
         }
         if (\is_array($options) && 1 === \count($options) && (($options[0] ?? null) instanceof self)) {
-            return $options[0]->copy();
+            return $options[0]->clone();
         }
         if (!($options instanceof self)) {
             throw new \InvalidArgumentException(__METHOD__.' expect an insance of '.__CLASS__.' or a PHP array as parameter, got '.(null !== $options && \is_object($options) ? $options::class : \gettype($options)));
         }
 
-        return $options->copy();
+        return $options->clone();
     }
 
     /**
@@ -119,7 +119,7 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
      *
      * @return static
      */
-    private function copy()
+    public function clone()
     {
         return new static($this->getKey(), $this->getValue(), $this->getType() ?? 1);
     }

@@ -72,4 +72,11 @@ interface TxnInterface
      * @return string|null
      */
     public function getDebtor();
+
+    /**
+     * Clone the current object
+     * 
+     * @return static 
+     */
+    public function clone();
 }

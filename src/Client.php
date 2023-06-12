@@ -171,25 +171,32 @@ final class Client implements ClientInterface
 
         $response = $this->curl->getResponse();
 
-        if (!empty($errorMessage = $this->curl->getErrorMessage()) || (0 !== $this->curl->getError())) {
-            throw new TxnRequestException('Could not create invoice transaction'.($errorMessage ?? 'Unkkown error'));
+        if (!empty($errorMessage = $this->curl->getErrorMessage()) || (0 !== ($error = $this->curl->getError()))) {
+            throw new TxnRequestException($request, $error, [], 'Could not create invoice transaction' . ($errorMessage ?? 'Unkkown error'));
         }
 
-        $statusCode = $this->curl->getStatusCode();
+        $statusCode = intval($this->curl->getStatusCode());
 
         $responseHeaders = $this->parseHeaders($this->curl->getResponseHeaders());
+        if (401 === $statusCode) {
+            throw new AuthorizationException($request, $responseHeaders, 'Unauthorized.');
+        }
 
-        if (422 === (int) $statusCode || 400 === (int) $statusCode) {
+        if (422 === $statusCode || 400 === $statusCode) {
             throw new TxnBadRequestException(
+                $request,
                 $this->decodeRequestResponse($response, $responseHeaders),
                 'Bad Http request'
             );
         }
 
-        if ((int) $statusCode < 200 && 202 < (int) $statusCode) {
+        if ($statusCode < 200 && 202 < $statusCode) {
             throw new TxnRequestException(
+                $request,
+                $statusCode,
+                $responseHeaders,
                 $errorMessage ?? class_exists(\Drewlabs\Psr7\ResponseReasonPhrase::class) ?
-                    \call_user_func([\Drewlabs\Psr7\ResponseReasonPhrase::class, 'getPrase'], (int) $statusCode) :
+                    \call_user_func([\Drewlabs\Psr7\ResponseReasonPhrase::class, 'getPrase'], $statusCode) :
                     'Unknown Request Error'
             );
         }
@@ -200,7 +207,7 @@ final class Client implements ClientInterface
             && !isset($result['id'])
             && !isset($result['paymenturl'])
         ) {
-            throw new TxnRequestException('Txn response does not have the required attributes. Please contact the library author for more information about the issue');
+            throw new TxnRequestException($request, $statusCode, $responseHeaders ?? [], 'Txn response does not have the required attributes. Please contact the library author for more information about the issue');
         }
 
         return new Txn(
