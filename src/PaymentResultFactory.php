@@ -53,7 +53,7 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
     private function arrayGet(array $array, string $name, $default = null)
     {
 
-        if (str_contains($name, '.')) {
+        if (false !== strpos($name, '.')) {
             $keys = explode('.', $name);
             $count = \count($keys);
             $index = 0;
