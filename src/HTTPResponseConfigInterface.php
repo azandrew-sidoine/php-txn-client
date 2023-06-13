@@ -30,6 +30,48 @@ interface HTTPResponseConfigInterface extends Arrayable
     public function clone();
 
     /**
+     * Get the txn_reference_key property.
+     *
+     * @return string
+     */
+    public function getTxnReferenceKey();
+
+    /**
+     * Get the txn_time_key property.
+     *
+     * @return string
+     */
+    public function getTxnTimeKey();
+
+    /**
+     * Get the txn_amount_key property.
+     *
+     * @return string
+     */
+    public function getTxnAmountKey();
+
+    /**
+     * Get the txn_id_key property.
+     *
+     * @return string
+     */
+    public function getTxnIdKey();
+
+    /**
+     * Get the txn_processor_key property.
+     *
+     * @return string
+     */
+    public function getTxnProcessorKey();
+
+    /**
+     * get `txn_payeer_id_key` property value
+     * 
+     * @return string 
+     */
+    public function getTxnPayeerIdKey();
+
+    /**
      * Get the Http response request options.
      *
      * @return HTTPResponseRequestOption[]

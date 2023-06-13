@@ -58,6 +58,12 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     private $txn_processor_key;
 
     /**
+     * 
+     * @var string
+     */
+    private $txn_payeer_id_key;
+
+    /**
      * @var HTTPResponseRequestOption[]
      */
     private $request_options;
@@ -125,6 +131,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
             'txn_amount_key' => 't_montant',
             'txn_id_key' => 't_id',
             'txn_processor_key' => 't_processor_id',
+            'txn_payeer_id_key' => 't_payeer'
         ];
     }
 
@@ -135,9 +142,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
 
     public function __clone()
     {
-        $this->request_options = array_map(function(HTTPResponseRequestOptionInterface $option) {
+        $this->request_options = array_map(function (HTTPResponseRequestOptionInterface $option) {
             return $option->clone();
-        }, array_filter($this->request_options ?? [], function($option) {
+        }, array_filter($this->request_options ?? [], function ($option) {
             return null !== $option;
         }));
     }
@@ -256,6 +263,18 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
+     * Set `txn_payeer_id_key` property value
+     * @param string $value
+     * 
+     * @return static 
+     */
+    public function setTxnPayeerIdKey(string $value)
+    {
+        $this->txn_payeer_id_key = $value;
+        return $this;
+    }
+
+    /**
      * Get the url property.
      *
      * @return string
@@ -343,6 +362,16 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     public function getRequestOptions()
     {
         return $this->request_options ?? [];
+    }
+
+    /**
+     * get `txn_payeer_id_key` property value
+     * 
+     * @return string 
+     */
+    public function getTxnPayeerIdKey()
+    {
+        return $this->txn_payeer_id_key;
     }
 
     public function toArray()

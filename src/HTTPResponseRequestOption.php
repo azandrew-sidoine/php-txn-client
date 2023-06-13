@@ -45,7 +45,7 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
     {
         $this->key = $key;
         $this->value = $value;
-        $this->type = $type ?? 1;
+        $this->type = $type ?? HTTPResponseRequestMetadataType::HEADER;
     }
 
     /**
@@ -73,6 +73,43 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
         }
 
         return $options->clone();
+    }
+
+    /**
+     * Create a request metadata for HTTP bearer token `authorization` header
+     * 
+     * @param string $bearerToken 
+     * @return static 
+     */
+    public static function bearerToken(string $bearerToken)
+    {
+        return static::authorizationHeader('Bearer', $bearerToken);
+    }
+
+    /**
+     * 
+     * Create a request metadata for HTTP basic auth `authorization` header
+     * 
+     * @param string $user 
+     * @param string $password 
+     * @return static 
+     */
+    public static function basicAuth(string $user, string $password)
+    {
+        return static::authorizationHeader('Basic', base64_encode(sprintf("%s:%s", $user, $password)));
+    }
+
+    /**
+     * Create a request metadata for HTTP `authorization` header
+     * 
+     * @param string $method 
+     * @param string $value
+     * 
+     * @return static 
+     */
+    public static function authorizationHeader(string $method, string $value)
+    {
+        return new static('Authorization', sprintf("%s %s", $method, $value), HTTPResponseRequestMetadataType::HEADER);
     }
 
     /**
