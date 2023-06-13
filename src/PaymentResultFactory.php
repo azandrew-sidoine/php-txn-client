@@ -35,12 +35,12 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
     {
         $object = is_array($object) ? $object : (is_object($object) ? get_object_vars($object) : []);
         return (new PaymentResult)
-            ->setTxnReference($this->arrayGet($object, $this->responseConfig->getTxnReferenceKey()))
-            ->setTxnTime($this->arrayGet($object, $this->responseConfig->getTxnTimeKey()))
-            ->setTxnAmount($this->arrayGet($object, $this->responseConfig->getTxnAmountKey(), 0.0))
-            ->setTxnId($this->arrayGet($object, $this->responseConfig->getTxnIdKey()))
-            ->setProcessorTxnId($this->arrayGet($object, $this->responseConfig->getTxnProcessorKey()))
-            ->setTxnPayeerid($this->arrayGet($object, $this->responseConfig->getTxnPayeerIdKey()));
+            ->withTxnReference($this->arrayGet($object, $this->responseConfig->getTxnReferenceKey()))
+            ->withTxnTime($this->arrayGet($object, $this->responseConfig->getTxnTimeKey()))
+            ->withTxnAmount($this->arrayGet($object, $this->responseConfig->getTxnAmountKey(), 0.0))
+            ->withTxnId($this->arrayGet($object, $this->responseConfig->getTxnIdKey()))
+            ->withProcessorTxnId($this->arrayGet($object, $this->responseConfig->getTxnProcessorKey()))
+            ->withTxnPayeerid($this->arrayGet($object, $this->responseConfig->getTxnPayeerIdKey()));
     }
 
     /**

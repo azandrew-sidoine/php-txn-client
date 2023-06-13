@@ -76,9 +76,10 @@ class PaymentResult
      *
      * @return static
      */
-    public function setTxnReference(string $value)
+    public function withTxnReference(string $value)
     {
-        $this->txnRef = $value;
+        $self = clone $this;
+        $self->txnRef = $value;
         return $this;
     }
 
@@ -87,9 +88,10 @@ class PaymentResult
      *
      * @return static
      */
-    public function setTxnTime(string $value)
+    public function withTxnTime(string $value)
     {
-        $this->txnTime = $value;
+        $self = clone $this;
+        $self->txnTime = $value;
         return $this;
     }
 
@@ -100,9 +102,10 @@ class PaymentResult
      * 
      * @return static
      */
-    public function setTxnAmount($value)
+    public function withTxnAmount($value)
     {
-        $this->txnAmount = $value;
+        $self = clone $this;
+        $self->txnAmount = $value;
         return $this;
     }
 
@@ -111,9 +114,10 @@ class PaymentResult
      *
      * @return static
      */
-    public function setTxnId(string $value)
+    public function withTxnId(string $value)
     {
-        $this->txnId = $value;
+        $self = clone $this;
+        $self->txnId = $value;
         return $this;
     }
 
@@ -122,9 +126,10 @@ class PaymentResult
      *
      * @return static
      */
-    public function setProcessorTxnId(string $value)
+    public function withProcessorTxnId(string $value)
     {
-        $this->processorTxnId = $value;
+        $self = clone $this;
+        $self->processorTxnId = $value;
         return $this;
     }
 
@@ -133,9 +138,10 @@ class PaymentResult
      *
      * @return static
      */
-    public function setTxnPayeerid(string $value)
+    public function withTxnPayeerid(string $value)
     {
-        $this->txnPayeerId = $value;
+        $self = clone $this;
+        $self->txnPayeerId = $value;
         return $this;
     }
 
