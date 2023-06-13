@@ -262,7 +262,9 @@ final class Client implements ClientInterface
         $httpHeaders['Request-Line'] = reset($list) ?? '';
         for ($i = 1; $i < \count($list); ++$i) {
             if (str_contains($list[$i], ':')) {
-                [$key, $value] = array_map(static fn ($item) => $item ? trim($item) : null, explode(':', $list[$i], 2));
+                [$key, $value] = array_map(static function ($item) {
+                    return $item ? trim($item) : null;
+                }, explode(':', $list[$i], 2));
                 $httpHeaders[$key] = $value;
             }
         }

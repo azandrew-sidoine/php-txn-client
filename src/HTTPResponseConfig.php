@@ -256,7 +256,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
         $value = \is_array($value) ? $value : [$value];
         $isArrayList = $value === array_filter($value, 'is_array');
         $value = $isArrayList ? $value : [$value];
-        $this->request_options = array_map(static fn ($option) => !($option instanceof Arrayable) ? HTTPResponseRequestMetadata::create($option) : $option, $value);
+        $this->request_options = array_map(static function ($option) {
+            return !($option instanceof Arrayable) ? HTTPResponseRequestMetadata::create($option) : $option;
+        }, $value);
 
         return $this;
     }
@@ -384,7 +386,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
             't_amount_key' => $this->getTxnAmountKey(),
             't_id_key' => $this->getTxnIdKey(),
             't_processor_id_key' => $this->getTxnProcessorKey(),
-            'options' => array_map(static fn (HTTPResponseRequestMetadataInterface $option) => $option->toArray(), $this->getRequestOptions()),
+            'options' => array_map(static function (HTTPResponseRequestMetadataInterface $option) {
+                return $option->toArray();
+            }, $this->getRequestOptions()),
         ];
     }
 }

@@ -99,7 +99,9 @@ class Txn implements TxnInterface
         $this->reference = $reference;
         $this->currency = $currency ?? 'XOF';
         $this->amount = $amount;
-        $this->processors = array_map(static fn ($processor) => (string) $processor, $processors ?? []);
+        $this->processors = array_map(static function ($processor) {
+            return (string) $processor;
+        }, $processors ?? []);
         $this->label = $label;
         $this->debtor = $debtor;
     }
@@ -186,7 +188,9 @@ class Txn implements TxnInterface
      */
     public function setProcessors(array $processors)
     {
-        return $this->merge('processors', array_map(static fn ($processor) => (string) $processor, $processors ?? []));
+        return $this->merge('processors', array_map(static function ($processor) {
+            return (string) $processor;
+        }, $processors ?? []));
     }
 
     /**
