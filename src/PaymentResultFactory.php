@@ -31,7 +31,7 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
         $this->responseConfig = $responseConfig ?? HTTPResponseConfig::create();
     }
 
-    public function create($object): PaymentResult
+    public function createPaymentResult($object): PaymentResult
     {
         $object = is_array($object) ? $object : (is_object($object) ? get_object_vars($object) : []);
         return (new PaymentResult)

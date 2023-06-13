@@ -22,5 +22,5 @@ interface PaymentResultFactoryInterface
      * 
      * @return PaymentResult 
      */
-    public function create($object): PaymentResult;
+    public function createPaymentResult($object): PaymentResult;
 }
