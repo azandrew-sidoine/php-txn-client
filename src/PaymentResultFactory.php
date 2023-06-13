@@ -40,7 +40,7 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
             ->withTxnAmount($this->arrayGet($object, $this->responseConfig->getTxnAmountKey(), 0.0))
             ->withTxnId($this->arrayGet($object, $this->responseConfig->getTxnIdKey()))
             ->withProcessorTxnId($this->arrayGet($object, $this->responseConfig->getTxnProcessorKey()))
-            ->withTxnPayeerid($this->arrayGet($object, $this->responseConfig->getTxnPayeerIdKey()));
+            ->withTxnPayeerId($this->arrayGet($object, $this->responseConfig->getTxnPayeerIdKey()));
     }
 
     /**

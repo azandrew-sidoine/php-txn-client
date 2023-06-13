@@ -16,7 +16,7 @@ class PaymentResultFactoryTest extends TestCase
         $at = date('Y-m-d H:i:s');
 
         // Act
-        $result = $factory->create([
+        $result = $factory->createPaymentResult([
             't_ref' => 'T-REF-830535',
             't_time' => $at,
             't_montant' => 3400,
@@ -29,7 +29,7 @@ class PaymentResultFactoryTest extends TestCase
         $this->assertEquals($processorTxnId, $result->getProcessorTxnId());
         $this->assertEquals(round(floatval(3400), 2), $result->getTxnAmount());
         $this->assertEquals($txnId, $result->getTxnId());
-        $this->assertEquals('22890775623', $result->getTxnPayeerid());
+        $this->assertEquals('22890775623', $result->getTxnPayeerId());
         $this->assertEquals($at, $result->getTxnTime());
         $this->assertEquals('T-REF-830535', $result->getTxnReference());
     }
@@ -51,7 +51,7 @@ class PaymentResultFactoryTest extends TestCase
         $at = date('Y-m-d H:i:s');
 
         // Act
-        $result = $factory->create([
+        $result = $factory->createPaymentResult([
             't_reference' => 'T-REF-830535',
             't_time' => $at,
             't_amount' => 3400,
@@ -64,7 +64,7 @@ class PaymentResultFactoryTest extends TestCase
         $this->assertEquals($processorTxnId, $result->getProcessorTxnId());
         $this->assertEquals(round(floatval(3400), 2), $result->getTxnAmount());
         $this->assertEquals($txnId, $result->getTxnId());
-        $this->assertEquals('22890775623', $result->getTxnPayeerid());
+        $this->assertEquals('22890775623', $result->getTxnPayeerId());
         $this->assertEquals($at, $result->getTxnTime());
         $this->assertEquals('T-REF-830535', $result->getTxnReference());
 
