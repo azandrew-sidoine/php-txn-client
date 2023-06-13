@@ -64,7 +64,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     private $txn_payeer_id_key;
 
     /**
-     * @var HTTPResponseRequestOption[]
+     * @var HTTPResponseRequestMetadataInterface[]
      */
     private $request_options;
 
@@ -142,7 +142,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
 
     public function __clone()
     {
-        $this->request_options = array_map(function (HTTPResponseRequestOptionInterface $option) {
+        $this->request_options = array_map(function (HTTPResponseRequestMetadataInterface $option) {
             return $option->clone();
         }, array_filter($this->request_options ?? [], function ($option) {
             return null !== $option;
@@ -257,7 +257,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
         $value = \is_array($value) ? $value : [$value];
         $isArrayList = $value === array_filter($value, 'is_array');
         $value = $isArrayList ? $value : [$value];
-        $this->request_options = array_map(static fn ($option) => !($option instanceof Arrayable) ? HTTPResponseRequestOption::create($option) : $option, $value);
+        $this->request_options = array_map(static fn ($option) => !($option instanceof Arrayable) ? HTTPResponseRequestMetadata::create($option) : $option, $value);
 
         return $this;
     }
@@ -357,7 +357,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**
      * Get the Http response request options.
      *
-     * @return HTTPResponseRequestOption[]
+     * @return HTTPResponseRequestMetadataInterface[]
      */
     public function getRequestOptions()
     {
@@ -385,7 +385,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
             't_amount_key' => $this->getTxnAmountKey(),
             't_id_key' => $this->getTxnIdKey(),
             't_processor_id_key' => $this->getTxnProcessorKey(),
-            'options' => array_map(static fn (HTTPResponseRequestOption $option) => $option->toArray(), $this->getRequestOptions()),
+            'options' => array_map(static fn (HTTPResponseRequestMetadataInterface $option) => $option->toArray(), $this->getRequestOptions()),
         ];
     }
 }

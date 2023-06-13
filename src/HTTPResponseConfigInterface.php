@@ -74,7 +74,7 @@ interface HTTPResponseConfigInterface extends Arrayable
     /**
      * Get the Http response request options.
      *
-     * @return HTTPResponseRequestOption[]
+     * @return HTTPResponseRequestMetadataInterface[]
      */
     public function getRequestOptions();
 }

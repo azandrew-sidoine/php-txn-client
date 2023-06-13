@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Drewlabs\TxnClient;
 
-interface HTTPResponseRequestOptionInterface extends Arrayable
+interface HTTPResponseRequestMetadataInterface extends Arrayable
 {
     /**
      * Return the response request option key.

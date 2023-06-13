@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Drewlabs\TxnClient;
 
 /**
- * @method static HTTPResponseRequestOption new(string $key, string $value, $type = 1)
+ * @method static HTTPResponseRequestMetadata new(string $key, string $value, $type = 1)
  */
-class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
+class HTTPResponseRequestMetadata implements HTTPResponseRequestMetadataInterface
 {
     use HasContructorFactory;
     /**
@@ -35,7 +35,7 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
     private $value;
 
     /**
-     * Creates a new {@see \Drewlabs\TxnClient\HTTPResponseRequestOption} instance.
+     * Creates a new {@see \Drewlabs\TxnClient\HTTPResponseRequestMetadataInterface} instance.
      *
      * @param int $type
      *
@@ -49,7 +49,7 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
     }
 
     /**
-     * Creates a new instance of {@see \Drewlabs\TxnClient\HTTPResponseRequestOption} classs.
+     * Creates a new instance of {@see \Drewlabs\TxnClient\HTTPResponseRequestMetadataInterface} classs.
      *
      * @param self|array $options
      *
