@@ -58,7 +58,6 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     private $txn_processor_key;
 
     /**
-     * 
      * @var string
      */
     private $txn_payeer_id_key;
@@ -70,6 +69,15 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
 
     public function __construct()
     {
+    }
+
+    public function __clone()
+    {
+        $this->request_options = array_map(static function (HTTPResponseRequestMetadataInterface $option) {
+            return $option->clone();
+        }, array_filter($this->request_options ?? [], static function ($option) {
+            return null !== $option;
+        }));
     }
 
     /**
@@ -131,22 +139,13 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
             'txn_amount_key' => 't_montant',
             'txn_id_key' => 't_id',
             'txn_processor_key' => 't_processor_id',
-            'txn_payeer_id_key' => 't_payeer'
+            'txn_payeer_id_key' => 't_payeer',
         ];
     }
 
     public function clone()
     {
         return clone $this;
-    }
-
-    public function __clone()
-    {
-        $this->request_options = array_map(function (HTTPResponseRequestMetadataInterface $option) {
-            return $option->clone();
-        }, array_filter($this->request_options ?? [], function ($option) {
-            return null !== $option;
-        }));
     }
 
     /**
@@ -263,14 +262,14 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * Set `txn_payeer_id_key` property value
-     * @param string $value
-     * 
-     * @return static 
+     * Set `txn_payeer_id_key` property value.
+     *
+     * @return static
      */
     public function setTxnPayeerIdKey(string $value)
     {
         $this->txn_payeer_id_key = $value;
+
         return $this;
     }
 
@@ -365,9 +364,9 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
-     * get `txn_payeer_id_key` property value
-     * 
-     * @return string 
+     * get `txn_payeer_id_key` property value.
+     *
+     * @return string
      */
     public function getTxnPayeerIdKey()
     {

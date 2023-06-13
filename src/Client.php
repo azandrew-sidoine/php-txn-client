@@ -172,10 +172,10 @@ final class Client implements ClientInterface
         $response = $this->curl->getResponse();
 
         if (!empty($errorMessage = $this->curl->getErrorMessage()) || (0 !== ($error = $this->curl->getError()))) {
-            throw new TxnRequestException($request, $error, [], 'Could not create invoice transaction' . ($errorMessage ?? 'Unkkown error'));
+            throw new TxnRequestException($request, $error, [], 'Could not create invoice transaction'.($errorMessage ?? 'Unkkown error'));
         }
 
-        $statusCode = intval($this->curl->getStatusCode());
+        $statusCode = (int) $this->curl->getStatusCode();
 
         $responseHeaders = $this->parseHeaders($this->curl->getResponseHeaders());
         if (401 === $statusCode) {
@@ -212,7 +212,7 @@ final class Client implements ClientInterface
 
         return new Txn(
             $result['reference'],
-            round(floatval($result['amount']), 2),
+            round((float) $result['amount'], 2),
             [],
             $result['currency'] ?? null,
             $result['label'] ?? null,

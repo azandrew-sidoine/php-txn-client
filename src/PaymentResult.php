@@ -46,14 +46,14 @@ class PaymentResult
     private $txnPayeerId;
 
     /**
-     * Creates class instance
-     * 
-     * @param string $ref 
-     * @param string $time 
-     * @param int|float $amount 
-     * @param string $id 
-     * @param string $mouvement 
-     * @param string $payeer 
+     * Creates class instance.
+     *
+     * @param string    $ref
+     * @param string    $time
+     * @param int|float $amount
+     * @param string    $id
+     * @param string    $mouvement
+     * @param string    $payeer
      */
     public function __construct(
         string $ref = null,
@@ -80,6 +80,7 @@ class PaymentResult
     {
         $self = clone $this;
         $self->txnRef = $value;
+
         return $self;
     }
 
@@ -92,6 +93,7 @@ class PaymentResult
     {
         $self = clone $this;
         $self->txnTime = $value;
+
         return $self;
     }
 
@@ -99,13 +101,14 @@ class PaymentResult
      * set the transaction amount / value property value.
      *
      * @param int|float $value
-     * 
+     *
      * @return static
      */
     public function withTxnAmount($value)
     {
         $self = clone $this;
         $self->txnAmount = $value;
+
         return $self;
     }
 
@@ -118,6 +121,7 @@ class PaymentResult
     {
         $self = clone $this;
         $self->txnId = $value;
+
         return $self;
     }
 
@@ -130,6 +134,7 @@ class PaymentResult
     {
         $self = clone $this;
         $self->processorTxnId = $value;
+
         return $self;
     }
 
@@ -142,6 +147,7 @@ class PaymentResult
     {
         $self = clone $this;
         $self->txnPayeerId = $value;
+
         return $self;
     }
 
@@ -172,7 +178,7 @@ class PaymentResult
      */
     public function getTxnAmount()
     {
-        return round(floatval($this->txnAmount ?? 0), 2);
+        return round((float) ($this->txnAmount ?? 0), 2);
     }
 
     /**

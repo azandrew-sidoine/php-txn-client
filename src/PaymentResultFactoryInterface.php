@@ -16,11 +16,9 @@ namespace Drewlabs\TxnClient;
 interface PaymentResultFactoryInterface
 {
     /**
-     * Creates a payment result instance
-     * 
+     * Creates a payment result instance.
+     *
      * @param array|object $object
-     * 
-     * @return PaymentResult 
      */
     public function createPaymentResult($object): PaymentResult;
 }

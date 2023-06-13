@@ -79,9 +79,9 @@ interface TxnRequestInterface
     public function withProtocolVersion($version);
 
     /**
-     * Clone the current object
-     * 
-     * @return static 
+     * Clone the current object.
+     *
+     * @return static
      */
     public function clone();
 }

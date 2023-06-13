@@ -21,10 +21,9 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
     private $responseConfig;
 
     /**
-     * Creates new class instance
-     * 
-     * @param HTTPResponseConfigInterface|null $responseConfig 
-     * @return void 
+     * Creates new class instance.
+     *
+     * @return void
      */
     public function __construct(HTTPResponseConfigInterface $responseConfig = null)
     {
@@ -33,8 +32,9 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
 
     public function createPaymentResult($object): PaymentResult
     {
-        $object = is_array($object) ? $object : (is_object($object) ? get_object_vars($object) : []);
-        return (new PaymentResult)
+        $object = \is_array($object) ? $object : (\is_object($object) ? get_object_vars($object) : []);
+
+        return (new PaymentResult())
             ->withTxnReference($this->arrayGet($object, $this->responseConfig->getTxnReferenceKey()))
             ->withTxnTime($this->arrayGet($object, $this->responseConfig->getTxnTimeKey()))
             ->withTxnAmount($this->arrayGet($object, $this->responseConfig->getTxnAmountKey(), 0.0))
@@ -44,31 +44,32 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
     }
 
     /**
-     * Query for value matching the `$name` variable
-     * 
-     * @param array $array 
-     * @param string $name 
-     * @param mixed $default 
-     * @return mixed 
+     * Query for value matching the `$name` variable.
+     *
+     * @param mixed $default
+     *
+     * @return mixed
      */
     private function arrayGet(array $array, string $name, $default = null)
     {
 
-		if (false !== strpos($name, '.')) {
-			$keys = explode('.', $name);
-			$count = count($keys);
-			$index = 0;
-			$current = $array;
-			while ($index < $count) {
-				# code...
-				if (null === $current) {
-					return $default;
-				}
-				$current = array_key_exists($keys[$index], $current) ? $current[$keys[$index]] : $current[$keys[$index]] ?? null;
-				$index += 1;
-			}
-			return $current;
-		}
-		return array_key_exists($name, $array ?? []) ? $array[$name] : $default;
+        if (str_contains($name, '.')) {
+            $keys = explode('.', $name);
+            $count = \count($keys);
+            $index = 0;
+            $current = $array;
+            while ($index < $count) {
+                // code...
+                if (null === $current) {
+                    return $default;
+                }
+                $current = \array_key_exists($keys[$index], $current) ? $current[$keys[$index]] : $current[$keys[$index]] ?? null;
+                ++$index;
+            }
+
+            return $current;
+        }
+
+        return \array_key_exists($name, $array ?? []) ? $array[$name] : $default;
     }
 }

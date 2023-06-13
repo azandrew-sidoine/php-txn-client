@@ -16,30 +16,22 @@ namespace Drewlabs\TxnClient;
 class TxnRequestException extends \Exception
 {
     /**
-     * 
      * @var int
      */
     private $statusCode;
 
     /**
-     * 
      * @var TxnRequestInterface
      */
     private $request;
 
     /**
-     * 
      * @var array
      */
     private $headers;
 
     /**
-     * Creates class instance
-     * 
-     * @param TxnRequestInterface $request 
-     * @param int $statusCode 
-     * @param array $responseHeaders 
-     * @param string $message
+     * Creates class instance.
      */
     public function __construct(TxnRequestInterface $request, int $statusCode, array $responseHeaders = [], string $message = 'Client Error')
     {
@@ -47,13 +39,11 @@ class TxnRequestException extends \Exception
         $this->request = $request;
         $this->statusCode = $statusCode;
         $this->headers = $responseHeaders ?? [];
-        
+
     }
 
-    
     /**
-     * returns the status code value
-     * @return int 
+     * returns the status code value.
      */
     public function getStatusCode(): int
     {
@@ -61,9 +51,7 @@ class TxnRequestException extends \Exception
     }
 
     /**
-     * return response headers
-     * 
-     * @return array 
+     * return response headers.
      */
     public function getHeaders(): array
     {
@@ -71,9 +59,7 @@ class TxnRequestException extends \Exception
     }
 
     /**
-     * return request object
-     * 
-     * @return TxnRequestInterface 
+     * return request object.
      */
     public function getRequest(): TxnRequestInterface
     {

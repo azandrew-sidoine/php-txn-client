@@ -15,16 +15,15 @@ namespace Drewlabs\TxnClient;
 
 class HTTPResponseRequestMetadataType
 {
-
     /**
-     * HTTP request metadata is passed as HTTP header
+     * HTTP request metadata is passed as HTTP header.
      *
      * @var int
      */
     public const HEADER = 1;
 
     /**
-     * HTTP request metadata is passed in HTTP request body
+     * HTTP request metadata is passed in HTTP request body.
      *
      * @var int
      */

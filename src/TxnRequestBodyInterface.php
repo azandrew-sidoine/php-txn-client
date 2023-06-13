@@ -37,9 +37,9 @@ interface TxnRequestBodyInterface extends Arrayable
     public function getTxn();
 
     /**
-     * Clone the current object
-     * 
-     * @return static 
+     * Clone the current object.
+     *
+     * @return static
      */
     public function clone();
 }

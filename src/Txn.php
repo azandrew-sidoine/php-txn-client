@@ -122,7 +122,7 @@ class Txn implements TxnInterface
             $attributes = get_object_vars($attributes);
         }
         if (!\is_array($attributes)) {
-            throw new \InvalidArgumentException('Expected PHP array or object type, got ' . (\is_object($attributes) && null !== $attributes ? $attributes::class : \gettype($attributes)));
+            throw new \InvalidArgumentException('Expected PHP array or object type, got '.(\is_object($attributes) && null !== $attributes ? $attributes::class : \gettype($attributes)));
         }
         if (\is_array($attributes)) {
             return self::createFromArray($attributes);

@@ -39,11 +39,6 @@ class TxnRequestBody implements TxnRequestBodyInterface
         $this->response = $response;
     }
 
-    public function clone()
-    {
-        return clone $this;
-    }
-
     /**
      * Returns the string representation of the current instance.
      *
@@ -67,6 +62,11 @@ class TxnRequestBody implements TxnRequestBodyInterface
         if ($this->response) {
             $this->response = $this->response->clone();
         }
+    }
+
+    public function clone()
+    {
+        return clone $this;
     }
 
     /**

@@ -37,9 +37,9 @@ interface HTTPResponseRequestMetadataInterface extends Arrayable
     public function getType();
 
     /**
-     * Clone the current object
-     * 
-     * @return static 
+     * Clone the current object.
+     *
+     * @return static
      */
     public function clone();
 }

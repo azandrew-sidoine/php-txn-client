@@ -76,10 +76,9 @@ class HTTPResponseRequestMetadata implements HTTPResponseRequestMetadataInterfac
     }
 
     /**
-     * Create a request metadata for HTTP bearer token `authorization` header
-     * 
-     * @param string $bearerToken 
-     * @return static 
+     * Create a request metadata for HTTP bearer token `authorization` header.
+     *
+     * @return static
      */
     public static function bearerToken(string $bearerToken)
     {
@@ -87,29 +86,23 @@ class HTTPResponseRequestMetadata implements HTTPResponseRequestMetadataInterfac
     }
 
     /**
-     * 
-     * Create a request metadata for HTTP basic auth `authorization` header
-     * 
-     * @param string $user 
-     * @param string $password 
-     * @return static 
+     * Create a request metadata for HTTP basic auth `authorization` header.
+     *
+     * @return static
      */
     public static function basicAuth(string $user, string $password)
     {
-        return static::authorizationHeader('Basic', base64_encode(sprintf("%s:%s", $user, $password)));
+        return static::authorizationHeader('Basic', base64_encode(sprintf('%s:%s', $user, $password)));
     }
 
     /**
-     * Create a request metadata for HTTP `authorization` header
-     * 
-     * @param string $method 
-     * @param string $value
-     * 
-     * @return static 
+     * Create a request metadata for HTTP `authorization` header.
+     *
+     * @return static
      */
     public static function authorizationHeader(string $method, string $value)
     {
-        return new static('Authorization', sprintf("%s %s", $method, $value), HTTPResponseRequestMetadataType::HEADER);
+        return new static('Authorization', sprintf('%s %s', $method, $value), HTTPResponseRequestMetadataType::HEADER);
     }
 
     /**

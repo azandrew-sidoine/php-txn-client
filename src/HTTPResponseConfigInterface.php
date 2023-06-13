@@ -23,9 +23,9 @@ interface HTTPResponseConfigInterface extends Arrayable
     public function getUrl();
 
     /**
-     * Clone the current object
-     * 
-     * @return static 
+     * Clone the current object.
+     *
+     * @return static
      */
     public function clone();
 
@@ -65,9 +65,9 @@ interface HTTPResponseConfigInterface extends Arrayable
     public function getTxnProcessorKey();
 
     /**
-     * get `txn_payeer_id_key` property value
-     * 
-     * @return string 
+     * get `txn_payeer_id_key` property value.
+     *
+     * @return string
      */
     public function getTxnPayeerIdKey();
 
