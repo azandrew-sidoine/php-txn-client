@@ -26,7 +26,7 @@ final class Client implements ClientInterface
     /**
      * @var string
      */
-    public const JSON_PATTERN = '/^(?:application|text)\/(?:[a-z]+(?:[\.-][0-9a-z]+){0,}[\+\.]|x-)?json(?:-[a-z]+)?/i';
+    const JSON_PATTERN = '/^(?:application|text)\/(?:[a-z]+(?:[\.-][0-9a-z]+){0,}[\+\.]|x-)?json(?:-[a-z]+)?/i';
 
     /**
      * @var CurlClient
@@ -102,7 +102,7 @@ final class Client implements ClientInterface
         array $processors = null,
         $currency = 'XOF',
         string $label = null,
-        string $debtor = null,
+        string $debtor = null
     ) {
         if (\is_string($request)) {
             $this->assertCreateInvoiceRequiredParameters($amount, $processors);
@@ -262,7 +262,7 @@ final class Client implements ClientInterface
         $httpHeaders['Request-Line'] = reset($list) ?? '';
         for ($i = 1; $i < \count($list); ++$i) {
             if (false !== strpos($list[$i], ':')) {
-                [$key, $value] = array_map(static function ($item) {
+                list($key, $value) = array_map(static function ($item) {
                     return $item ? trim($item) : null;
                 }, explode(':', $list[$i], 2));
                 $httpHeaders[$key] = $value;

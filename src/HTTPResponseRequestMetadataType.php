@@ -20,17 +20,17 @@ class HTTPResponseRequestMetadataType
      *
      * @var int
      */
-    public const HEADER = 1;
+    const HEADER = 1;
 
     /**
      * HTTP request metadata is passed in HTTP request body.
      *
      * @var int
      */
-    public const BODY = 2;
+    const BODY = 2;
 
     /**
      * @var int[]
      */
-    public const VALUES = [self::HEADER, self::BODY];
+    const VALUES = [self::HEADER, self::BODY];
 }

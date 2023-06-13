@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": ">=7.0",
-        "drewlabs/curl-client": "^0.1.4"
+        "drewlabs/curl-client": "^0.3.2"
     },
     "require-dev": {
         "phpunit/phpunit": ">=6.0"

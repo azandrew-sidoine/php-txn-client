@@ -42,7 +42,7 @@ interface ClientInterface
         array $processors = null,
         $currency = 'XOF',
         string $label = null,
-        string $debtor = null,
+        string $debtor = null
     );
 
     /**
