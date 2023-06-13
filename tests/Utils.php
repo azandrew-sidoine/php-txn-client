@@ -18,7 +18,7 @@ class Utils
     public static function guidv4($data = null)
     {
         // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
-        $data ??= random_bytes(16);
+        $data = $data ?? random_bytes(16);
         \assert(16 === \strlen($data));
 
         // Set version to 0100

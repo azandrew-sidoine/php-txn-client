@@ -61,7 +61,7 @@ class PaymentResult
         $amount = 0,
         string $id = null,
         string $mouvement = null,
-        string $payeer = null,
+        string $payeer = null
     ) {
         $this->txnRef = $ref;
         $this->txnTime = $time;
