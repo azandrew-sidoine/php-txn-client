@@ -69,7 +69,7 @@ class HTTPResponseRequestMetadata implements HTTPResponseRequestMetadataInterfac
             return $options[0]->clone();
         }
         if (!($options instanceof self)) {
-            throw new \InvalidArgumentException(__METHOD__.' expect an insance of '.__CLASS__.' or a PHP array as parameter, got '.(null !== $options && \is_object($options) ? $options::class : \gettype($options)));
+            throw new \InvalidArgumentException(__METHOD__.' expect an insance of '.__CLASS__.' or a PHP array as parameter, got '.(null !== $options && \is_object($options) ? get_class($options) : \gettype($options)));
         }
 
         return $options->clone();
