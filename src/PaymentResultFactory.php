@@ -34,13 +34,27 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
     {
         $object = \is_array($object) ? $object : (\is_object($object) ? get_object_vars($object) : []);
 
-        return (new PaymentResult())
-            ->withTxnReference($this->arrayGet($object, $this->responseConfig->getTxnReferenceKey()))
-            ->withTxnTime($this->arrayGet($object, $this->responseConfig->getTxnTimeKey()))
-            ->withTxnAmount($this->arrayGet($object, $this->responseConfig->getTxnAmountKey(), 0.0))
-            ->withTxnId($this->arrayGet($object, $this->responseConfig->getTxnIdKey()))
-            ->withProcessorTxnId($this->arrayGet($object, $this->responseConfig->getTxnProcessorKey()))
-            ->withTxnPayeerId($this->arrayGet($object, $this->responseConfig->getTxnPayeerIdKey()));
+        $paymentResult = new PaymentResult();
+
+        if (null !== ($ref = $this->arrayGet($object, $this->responseConfig->getTxnReferenceKey()))) {
+            $paymentResult = $paymentResult->withTxnReference(strval($ref));
+        }
+        if (null !== ($txnTime = $this->arrayGet($object, $this->responseConfig->getTxnTimeKey()))) {
+            $paymentResult = $paymentResult->withTxnTime((string)$txnTime);
+        }
+        if (null !== ($txnAmount = $this->arrayGet($object, $this->responseConfig->getTxnAmountKey(), 0.0))) {
+            $paymentResult = $paymentResult->withTxnAmount($txnAmount);
+        }
+        if (null !== ($txnId = $this->arrayGet($object, $this->responseConfig->getTxnIdKey()))) {
+            $paymentResult = $paymentResult->withTxnId((string)$txnId);
+        }
+        if (null !== ($processorTxnId = $this->arrayGet($object, $this->responseConfig->getTxnProcessorKey()))) {
+            $paymentResult = $paymentResult->withProcessorTxnId((string)$processorTxnId);
+        }
+        if ((null !== $this->responseConfig->getTxnPayeerIdKey()) && null !== ($payeerId = $this->arrayGet($object, $this->responseConfig->getTxnPayeerIdKey()))) {
+            $paymentResult = $paymentResult->withTxnPayeerId((string)$payeerId);
+        }
+        return $paymentResult;
     }
 
     /**
@@ -50,9 +64,8 @@ class PaymentResultFactory implements PaymentResultFactoryInterface
      *
      * @return mixed
      */
-    private function arrayGet(array $array, string $name, $default = null)
+    private function arrayGet(array $array, string $name = null, $default = null)
     {
-
         if (false !== strpos($name, '.')) {
             $keys = explode('.', $name);
             $count = \count($keys);
