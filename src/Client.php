@@ -171,8 +171,8 @@ final class Client implements ClientInterface
 
         $response = $this->curl->getResponse();
 
-        if (!empty($errorMessage = $this->curl->getErrorMessage()) || (0 !== ($error = $this->curl->getError()))) {
-            throw new TxnRequestException($request, $error, [], 'Could not create invoice transaction'.($errorMessage ?? 'Unkkown error'));
+        if (!empty($errorMessage = $this->curl->getErrorMessage()) || (0 !== $this->curl->getError())) {
+            throw new TxnRequestException($request, intval($this->curl->getError()), [], 'Could not create invoice transaction'.($errorMessage ?? 'Unkkown error'));
         }
 
         $statusCode = (int) $this->curl->getStatusCode();
