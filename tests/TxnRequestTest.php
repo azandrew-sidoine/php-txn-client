@@ -1,5 +1,7 @@
 <?php
 
+namespace Drewlabs\TxnClient\Tests;
+
 use Drewlabs\TxnClient\Tests\Utils;
 use Drewlabs\TxnClient\Txn;
 use Drewlabs\TxnClient\TxnRequest;

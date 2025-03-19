@@ -7,14 +7,14 @@ use Stringable;
 interface TxnRequestInterface
 {
     /**
-     * Returns the HTTP request uri provided by the current instance
+     * returns the HTTP request uri provided by the current instance
      * 
      * @return string|Stringable 
      */
     public function getUri();
 
     /**
-     * Returns an instance with the provided URI.
+     * returns an instance with the provided URI.
      * 
      * @param string|Stringable $uri
      * 
@@ -23,28 +23,28 @@ interface TxnRequestInterface
     public function withUri($uri);
 
     /**
-     * Returns the HTTP verb used when sending request
+     * returns the HTTP verb used when sending request
      * 
      * @return string 
      */
     public function getMethod();
 
     /**
-     * Return an instance with the provided HTTP method.
+     * returns an instance with the provided HTTP method.
      * 
      * @return static 
      */
     public function withMethod(string $method);
 
     /**
-     * Returns the request body of the current request
+     * returns the request body of the current request
      * 
      * @return string|TxnRequestBodyInterface
      */
     public function getBody();
 
     /**
-     * Return an instance with the specified message body.
+     * returns an instance with the specified message body.
      * 
      * @param TxnRequestBodyInterface $body
      * 
@@ -53,14 +53,14 @@ interface TxnRequestInterface
     public function withBody(TxnRequestBodyInterface $body);
 
     /**
-     * Return the provided HTTP protocol version.
+     * returns the provided HTTP protocol version.
      * 
      * @return static 
      */
     public function getProtocolVersion();
 
     /**
-     * Return an instance with the specified HTTP protocol version.
+     * returns an instance with the specified HTTP protocol version.
      *
      * The version string MUST contain only the HTTP version number (e.g.,
      * "1.1", "1.0").

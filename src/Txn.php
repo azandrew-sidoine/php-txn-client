@@ -83,10 +83,10 @@ class Txn implements TxnInterface
         float $amount,
         array $processors,
         $currency = 'XOF',
-        string $label = null,
-        string $debtor = null,
+        ?string $label = null,
+        ?string $debtor = null,
         $id = null,
-        string $payment_url = null
+        ?string $payment_url = null
     ) {
         $this->payment_url = $payment_url;
         $this->id = $id;

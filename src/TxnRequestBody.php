@@ -6,16 +6,10 @@ use Drewlabs\Curl\Converters\JSONEncoder;
 
 class TxnRequestBody implements TxnRequestBodyInterface
 {
-    /**
-     * 
-     * @var TxnInterface
-     */
+    /**  @var TxnInterface */
     private $txn;
 
-    /**
-     * 
-     * @var HTTPResponseConfigInterface
-     */
+    /** @var HTTPResponseConfigInterface */
     private $response;
 
     /**
@@ -24,7 +18,7 @@ class TxnRequestBody implements TxnRequestBodyInterface
      * @param TxnInterface $txn
      * @param HTTPResponseConfigInterface $response 
      */
-    public function __construct(Txn $txn, HTTPResponseConfigInterface $response = null)
+    public function __construct(Txn $txn, ?HTTPResponseConfigInterface $response = null)
     {
         $this->txn = $txn;
         $this->response = $response;

@@ -8,58 +8,31 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
 {
     use ArrayInstanciable;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $url;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $redirect_response_url;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $method;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $txn_reference_key;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $txn_time_key;
 
-    /**
-     * 
-     * @var string
-     */
+    /**  @var string */
     private $txn_amount_key;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $txn_id_key;
 
-    /**
-     * 
-     * @var string
-     */
+    /**  @var string */
     private $txn_processor_key;
 
-    /**
-     * 
-     * @var HTTPResponseRequestOption[]
-     */
+    /**  @var HTTPResponseRequestOption[] */
     private $request_options;
 
     public function __construct()

@@ -11,45 +11,23 @@ use UnexpectedValueException;
 final class Client implements ClientInterface
 {
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     const JSON_PATTERN = '/^(?:application|text)\/(?:[a-z]+(?:[\.-][0-9a-z]+){0,}[\+\.]|x-)?json(?:-[a-z]+)?/i';
 
-    /**
-     * 
-     * @var CurlClient
-     */
+    /** @var CurlClient */
     private $curl;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $txnRequestPath = 'api/transactions';
 
-    /**
-     * 
-     * @var array
-     */
+    /** @var array */
     private $credentials = [];
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $responseURL;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $redirectURL;
-
-    /**
-     * Creates an instance of {@see Drewlabs\TxnClient\Client} class
-     */
 
     /**
      * Creates an instance of {@see Drewlabs\TxnClient\Client} class
@@ -58,7 +36,7 @@ final class Client implements ClientInterface
      * @param string $clientid 
      * @param string $clientsecret 
      */
-    public function __construct(string $host = null, string $clientid = null, string $clientsecret = null)
+    public function __construct(?string $host = null, ?string $clientid = null, ?string $clientsecret = null)
     {
         $this->curl = new CURLClient($host);
         if ($clientsecret) {
@@ -74,7 +52,7 @@ final class Client implements ClientInterface
      * 
      * @return static 
      */
-    public function setCredentials(string $secret, string $id = null)
+    public function setCredentials(string $secret, ?string $id = null)
     {
         $this->credentials = ['clientid' => $id, 'clientsecret' => $secret];
         return $this;
@@ -88,7 +66,7 @@ final class Client implements ClientInterface
      * 
      * @return static 
      */
-    public function respondTo(string $url, string $redirect_url = null)
+    public function respondTo(string $url, ?string $redirect_url = null)
     {
         $this->responseURL = $url;
         $this->redirectURL = $redirect_url;
@@ -97,11 +75,11 @@ final class Client implements ClientInterface
 
     public function createTxn(
         $request,
-        float $amount = null,
-        array $processors = null,
+        ?float $amount = null,
+        ?array $processors = null,
         $currency = 'XOF',
-        string $label = null,
-        string $debtor = null,
+        ?string $label = null,
+        ?string $debtor = null,
     ) {
         if (is_string($request)) {
             $this->assertCreateInvoiceRequiredParameters($amount, $processors);

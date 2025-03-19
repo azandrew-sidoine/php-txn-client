@@ -15,7 +15,7 @@ interface TxnInterface
     public function getPaymentUrl();
 
     /**
-     * Returns the unique identifier of the transaction (txn)
+     * returns the unique identifier of the transaction (txn)
      * on the gateway platform
      * 
      * @return string 
@@ -23,7 +23,7 @@ interface TxnInterface
     public function getId();
 
     /**
-     * Returns the transaction reference
+     * returns the transaction reference
      * 
      * @return string 
      */

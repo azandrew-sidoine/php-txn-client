@@ -5,7 +5,7 @@ namespace Drewlabs\TxnClient;
 interface Arrayable
 {
     /**
-     * Returns a PHP array representation of the current instance
+     * returns a PHP array representation of the current instance
      * 
      * @return array 
      */

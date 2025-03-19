@@ -4,32 +4,19 @@
 namespace Drewlabs\TxnClient;
 
 use InvalidArgumentException;
-use Stringable;
 
 class TxnRequest implements TxnRequestInterface
 {
-    /**
-     * 
-     * @var string|Stringable
-     */
+    /** @var string|\Stringable */
     private $uri;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $method;
 
-    /**
-     * 
-     * @var TxnRequestBodyInterface
-     */
+    /** @var TxnRequestBodyInterface */
     private $body;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $version;
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+namespace Drewlabs\TxnClient\Tests;
+
 use Drewlabs\TxnClient\HTTPResponseConfig;
 use Drewlabs\TxnClient\HTTPResponseRequestOption;
 use PHPUnit\Framework\TestCase;

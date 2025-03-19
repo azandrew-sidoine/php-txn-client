@@ -12,22 +12,14 @@ use InvalidArgumentException;
 class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
 {
     use HasContructorFactory;
-    /**
-     * 
-     * @var int
-     */
+
+    /** @var int */
     private $type;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $key;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $value;
 
     /**

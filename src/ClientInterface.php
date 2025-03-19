@@ -29,11 +29,11 @@ interface ClientInterface
      */
     public function createTxn(
         $request,
-        float $amount = null,
-        array $processors = null,
+        ?float $amount = null,
+        ?array $processors = null,
         $currency = 'XOF',
-        string $label = null,
-        string $debtor = null,
+        ?string $label = null,
+        ?string $debtor = null,
     );
 
     /**
