@@ -32,12 +32,13 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     /**  @var string */
     private $txn_processor_key;
 
+    /** @var string */
+    private $txn_payeer_id_key;
+
     /**  @var HTTPResponseRequestOption[] */
     private $request_options;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
 
     /**
@@ -204,6 +205,18 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
+     * Set `txn_payeer_id_key` property value.
+     *
+     * @return static
+     */
+    public function setTxnPayeerIdKey(string $value)
+    {
+        $this->txn_payeer_id_key = $value;
+
+        return $this;
+    }
+
+    /**
      * Set the Http response request options
      * 
      * @param array<array>|Arrayable $value
@@ -303,6 +316,16 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
     }
 
     /**
+     * get `txn_payeer_id_key` property value.
+     *
+     * @return string
+     */
+    public function getTxnPayeerIdKey()
+    {
+        return $this->txn_payeer_id_key;
+    }
+
+    /**
      * returns the Http response request options
      * 
      * @return HTTPResponseRequestOption[]
@@ -323,6 +346,7 @@ class HTTPResponseConfig implements HTTPResponseConfigInterface
             't_amount_key' => $this->getTxnAmountKey(),
             't_id_key' => $this->getTxnIdKey(),
             't_processor_id_key' => $this->getTxnProcessorKey(),
+            'txn_payeer_id_key' => $this->getTxnPayeerIdKey(),
             'options' => array_map(function (HTTPResponseRequestOption $option) {
                 return $option->toArray();
             }, $this->getRequestOptions())
