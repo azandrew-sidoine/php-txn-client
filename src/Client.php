@@ -2,7 +2,7 @@
 
 namespace Drewlabs\TxnClient;
 
-use Drewlabs\Curl\Client as CurlClient;
+use Drewlabs\Curl\Client as Curl;
 use Drewlabs\Curl\Converters\JSONDecoder;
 use InvalidArgumentException;
 use JsonException;
@@ -14,7 +14,7 @@ final class Client implements ClientInterface
     /** @var string */
     const JSON_PATTERN = '/^(?:application|text)\/(?:[a-z]+(?:[\.-][0-9a-z]+){0,}[\+\.]|x-)?json(?:-[a-z]+)?/i';
 
-    /** @var CurlClient */
+    /** @var Curl */
     private $curl;
 
     /** @var string */
@@ -38,7 +38,7 @@ final class Client implements ClientInterface
      */
     public function __construct(?string $host = null, ?string $clientid = null, ?string $clientsecret = null)
     {
-        $this->curl = new CURLClient($host);
+        $this->curl = new Curl($host);
         if ($clientsecret) {
             $this->credentials = ['clientid' => $clientid, 'clientsecret' => $clientsecret];
         }
@@ -73,14 +73,8 @@ final class Client implements ClientInterface
         return $this;
     }
 
-    public function createTxn(
-        $request,
-        ?float $amount = null,
-        ?array $processors = null,
-        $currency = 'XOF',
-        ?string $label = null,
-        ?string $debtor = null,
-    ) {
+    public function createTxn($request, ?float $amount = null, ?array $processors = null, $currency = 'XOF', ?string $label = null, ?string $debtor = null)
+    {
         if (is_string($request)) {
             $this->assertCreateInvoiceRequiredParameters($amount, $processors);
             $request = new Txn(
@@ -169,15 +163,12 @@ final class Client implements ClientInterface
                     'Unknown Request Error'
             );
         }
+
         $result = $this->decodeRequestResponse($response, $responseHeaders);
-        if (
-            !isset($result['reference']) &&
-            !isset($result['amount']) &&
-            !isset($result['id']) &&
-            !isset($result['paymenturl'])
-        ) {
+        if (!isset($result['reference']) && !isset($result['amount']) && !isset($result['id']) && !isset($result['paymenturl'])) {
             throw new TxnRequestException('Txn response does not have the required attributes. Please contact the library author for more information about the issue');
         }
+
         return new Txn(
             $result['reference'],
             $result['amount'],
@@ -205,8 +196,7 @@ final class Client implements ClientInterface
         if (false !== preg_match(self::JSON_PATTERN, $this->getHeader($headers, 'content-type'))) {
             $result = (new JSONDecoder)->decode($response);
         }
-        // If the Content-Type header is not present in the response headers, we apply the try catch clause
-        // To insure no error is thrown when decoding.
+        
         if (null === $result) {
             try {
                 $result = (new JSONDecoder)->decode($response) ?? [];
@@ -214,6 +204,7 @@ final class Client implements ClientInterface
                 $result = [];
             }
         }
+
         return (array)($result ?? []);
     }
 
@@ -274,6 +265,7 @@ final class Client implements ClientInterface
         if ((null === $amount) || (null === $processors) || !is_array($processors)) {
             throw new InvalidArgumentException('$amount and $processors parameters are required when parameter 1 is a string');
         }
+        
         return true;
     }
 }

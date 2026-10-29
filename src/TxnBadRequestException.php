@@ -4,6 +4,7 @@ namespace Drewlabs\TxnClient;
 
 class TxnBadRequestException extends TxnRequestException
 {
+    /** @var array */
     private $errors;
 
     /**

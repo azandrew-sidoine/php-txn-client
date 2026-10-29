@@ -78,16 +78,7 @@ class Txn implements TxnInterface
      * @param string|int $id 
      * @param string $payment_url 
      */
-    public function __construct(
-        string $reference,
-        float $amount,
-        array $processors,
-        $currency = 'XOF',
-        ?string $label = null,
-        ?string $debtor = null,
-        $id = null,
-        ?string $payment_url = null
-    ) {
+    public function __construct(string $reference,float $amount,array $processors,$currency = 'XOF',?string $label = null,?string $debtor = null,$id = null,?string $payment_url = null) {
         $this->payment_url = $payment_url;
         $this->id = $id;
         $this->reference = $reference;
@@ -111,12 +102,15 @@ class Txn implements TxnInterface
         if (is_object($attributes)) {
             $attributes = get_object_vars($attributes);
         }
+
         if (!is_array($attributes)) {
             throw new InvalidArgumentException("Expected PHP array or object type, got " . (is_object($attributes) && !is_null($attributes) ? get_class($attributes) : gettype($attributes)));
-        };
+        }
+
         if (is_array($attributes)) {
             return self::createFromArray($attributes);
         }
+
         throw new UnexpectedValueException('Expect parameter of Txn::create() to be an array, ');
     }
 
@@ -132,7 +126,7 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Returns the txn payment url 
+     * returns the txn payment url 
      * 
      * @return static 
      */
@@ -141,14 +135,16 @@ class Txn implements TxnInterface
         if (false === ($components = @parse_url($url))) {
             throw new UnexpectedValueException('$url parameter must be a valid resource url');
         }
+
         if (!in_array(strtolower($components['scheme'] ?? ''), ['http', 'https'])) {
             throw new UnexpectedValueException('Payment URL must be a valid HTTP resource URL');
         }
+
         return $this->merge('payment_url', $url);
     }
 
     /**
-     * Returns the transaction reference
+     * returns the transaction reference
      * 
      * @param string $ref 
      * @return static 
@@ -162,7 +158,8 @@ class Txn implements TxnInterface
     /**
      * Set the amount property
      * 
-     * @param float $value 
+     * @param float $amount
+     * 
      * @return static 
      */
     public function setAmount(float $amount)
@@ -174,7 +171,8 @@ class Txn implements TxnInterface
     /**
      * Set the processors property
      * 
-     * @param array<string> $value 
+     * @param array<string> $processors
+     *  
      * @return static 
      */
     public function setProcessors(array $processors)
@@ -209,7 +207,7 @@ class Txn implements TxnInterface
     /**
      * Set the response config of the current request object
      * 
-     * @param Arrayable $value 
+     * @param string $value 
      * 
      * @return static 
      */
@@ -227,16 +225,15 @@ class Txn implements TxnInterface
      */
     protected function merge(string $attribute, $value)
     {
-        /**
-         * @var object|\stdClass
-         */
+        /** @var object|\stdClass */
         $object = clone ($this);
         $object->{$attribute} = $value;
+        
         return $object;
     }
 
     /**
-     * Returns the txn id
+     * returns the txn id
      * 
      * @return string 
      */
@@ -246,7 +243,7 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Returns the txn payment url 
+     * returns the txn payment url 
      * 
      * @return string|Stringable 
      */
@@ -256,7 +253,7 @@ class Txn implements TxnInterface
     }
 
     /**
-     * Returns the transaction reference
+     * returns the transaction reference
      * 
      * @return string 
      */

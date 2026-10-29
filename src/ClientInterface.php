@@ -27,14 +27,7 @@ interface ClientInterface
      * @throws InvalidArgumentException
      * @throws TxnRequestException
      */
-    public function createTxn(
-        $request,
-        ?float $amount = null,
-        ?array $processors = null,
-        $currency = 'XOF',
-        ?string $label = null,
-        ?string $debtor = null,
-    );
+    public function createTxn($request, ?float $amount = null, ?array $processors = null, $currency = 'XOF', ?string $label = null, ?string $debtor = null);
 
     /**
      * Send the Invoice transaction request

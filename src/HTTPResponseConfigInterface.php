@@ -8,7 +8,6 @@ interface HTTPResponseConfigInterface extends Arrayable
     /**
      * Get the url property
      * 
-     * @param string $value 
      * @return $this 
      */
     public function getUrl();

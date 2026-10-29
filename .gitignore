@@ -6,3 +6,5 @@ index.php
 cache/
 /.bin
 docs.php
+/.phpunit.cache
+/.phpunit.result.cache

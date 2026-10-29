@@ -22,7 +22,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
-    "php": "^7.0|^8.0",
+    "php": ">=7.2",
     "drewlabs/curl-client": "^0.1.4|^0.3.0|^0.4.0"
   },
   "require-dev": {

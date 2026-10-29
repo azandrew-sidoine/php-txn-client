@@ -28,12 +28,8 @@ class TxnRequest implements TxnRequestInterface
      * @param string $version 
      * @return void 
      */
-    public function __construct(
-        $uri,
-        $method,
-        TxnRequestBodyInterface $body,
-        string $version = '1.1'
-    ) {
+    public function __construct($uri, $method, TxnRequestBodyInterface $body, string $version = '1.1')
+    {
         $this->uri = $uri;
         $this->method = $method;
         $this->body = $body;
@@ -52,8 +48,8 @@ class TxnRequest implements TxnRequestInterface
      * **Note** Implementation does not modify the original request uri, 
      * instead it creates a copy of the object and modify uri of the copy.
      * 
-     * @param \Stringable|string $body 
-     * @param string|null $secret 
+     * @param \Stringable|string $uri
+     * 
      * @return static 
      */
     public function withUri($uri)
@@ -73,8 +69,10 @@ class TxnRequest implements TxnRequestInterface
      * **Note** Implementation does not modify the original request method, 
      * instead it creates a copy of the object and modify method of the copy.
      * 
-     * @param string $method 
+     * @param string $method
+     * 
      * @return static 
+     * 
      * @throws InvalidArgumentException 
      */
     public function withMethod(string $method)
@@ -98,8 +96,8 @@ class TxnRequest implements TxnRequestInterface
      * **Note** Implementation does not modify the original request body, 
      * instead it creates a copy of the object and modify body of the copy.
      * 
-     * @param TxnRequestBodyInterface $body 
-     * @param string|null $secret 
+     * @param TxnRequestBodyInterface $body
+     * 
      * @return static 
      */
     public function withBody(TxnRequestBodyInterface $body)

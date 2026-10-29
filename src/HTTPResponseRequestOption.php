@@ -65,7 +65,6 @@ class HTTPResponseRequestOption implements HTTPResponseRequestOptionInterface
     /**
      * Creates a new instance of the current class by copying attrributes values from the provided object
      * 
-     * @param HTTPResponseRequestOption $option 
      * @return static 
      */
     private function copy()

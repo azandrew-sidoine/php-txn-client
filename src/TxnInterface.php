@@ -7,8 +7,7 @@ use Stringable;
 interface TxnInterface
 {
     /**
-     * Return the txn payment uri interface|string that to which
-     * a user must be redirect in order to process the transaction
+     * returns the txn payment uri interface|string that to which a user must be redirect in order to process the transaction
      * 
      * @return string|Stringable
      */
